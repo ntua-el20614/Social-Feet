@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '/authentication/login_screen.dart';
+import '/authentication/register_screen.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -7,119 +10,145 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'SocialFeet',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: Start(),
+      routes: {
+        '/login': (context) => LoginScreen(),
+        '/register': (context) => RegisterScreen(),
+      },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
+class Start extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    // Obtain the screen size
+    var screenSize = MediaQuery.of(context).size;
+
+    // Calculate the width and height you want to use,
+    // you can adjust the percentage as needed to suit your layout
+    double containerWidth = screenSize.width; // 90% of the screen width
+    double containerHeight =
+        screenSize.height; // 80% of the screen height, adjust as needed
+
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+        child: SingleChildScrollView(
+          // Makes the content scrollable
+          child: Container(
+            width: containerWidth,
+            height: containerHeight,
+            clipBehavior: Clip.antiAlias,
+            decoration: _boxDecoration(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _logoSection(context),
+                _titleText('Find your fitness buddy!'),
+                _actionButton(context, 'Login', Color(0xFF8846DF), '/login'),
+                _actionButton(
+                    context, 'Register', Color(0xFF36DDA6), '/register'),
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
+  BoxDecoration _boxDecoration() {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment(-0.21, -0.98),
+        end: Alignment(0.21, 0.98),
+        colors: [Color(0x4C36DDA6), Color(0x4C8846DF)],
+      ),
+    );
+  }
+
+  Widget _logoSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Column(
+        children: [
+          Text(
+            'SocialFeet',
+            style: TextStyle(
+                fontSize: 24, fontWeight: FontWeight.w700, color: Colors.black),
+          ),
+          SizedBox(height: 52), // This SizedBox acts as a margin of 52px
+
+          Image.asset(
+            './lib/photos/logo.png',
+            width: 198, // Set width to 198px
+            height: 198, // Set height to 198px
+            fit: BoxFit
+                .cover, // Cover ensures the image covers the box without changing aspect ratio
+          ), // Make sure this path matches the one in your pubspec.yaml
+        ],
+      ),
+    );
+  }
+
+  Widget _titleText(String text) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Column(children: [
+          SizedBox(height: 52), // This SizedBox acts as a margin of 52px
+
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 24, fontWeight: FontWeight.w700, color: Colors.black),
+          ),
+          SizedBox(height: 52), // This SizedBox acts as a margin of 52px
+        ]));
+  }
+
+  Widget _actionButton(
+      BuildContext context, String text, Color color, String routeName) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.pushNamed(context, routeName); // Add navigation logic
+        },
+        style: ElevatedButton.styleFrom(
+          primary: color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(48),
+          ),
+          minimumSize: Size(182, 43), // Set the size here
+        ),
+        child: Text(
+          text,
+          style:
+              TextStyle(color: Colors.white), // Change the text color to black
+        ),
+      ),
+    );
+  }
+}
+
+Widget _actionButton(
+    BuildContext context, String text, Color color, String route) {
+  return ElevatedButton(
+    onPressed: () {
+      Navigator.pushNamed(context, route);
+    },
+    style: ElevatedButton.styleFrom(
+      primary: color,
+      minimumSize: Size(182, 43), // Set the size here
+    ),
+    child: Text(text),
+  );
 }
