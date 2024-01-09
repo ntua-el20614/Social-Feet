@@ -89,7 +89,7 @@ class LoginScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    HomeScreen()), // Directly navigating to HomeScreen
+                    HomePage()), // Directly navigating to HomePage
           );
         },
         style: ElevatedButton.styleFrom(
