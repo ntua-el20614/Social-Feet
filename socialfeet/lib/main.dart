@@ -36,8 +36,7 @@ class Start extends StatelessWidget {
     // Calculate the width and height you want to use,
     // you can adjust the percentage as needed to suit your layout
     double containerWidth = screenSize.width; // 90% of the screen width
-    double containerHeight =
-        screenSize.height; // 80% of the screen height, adjust as needed
+    double containerHeight = screenSize.height; // 80% of the screen height, adjust as needed
 
     return Scaffold(
       body: Center(
