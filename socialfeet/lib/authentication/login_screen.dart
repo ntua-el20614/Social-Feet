@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/home/home.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -18,8 +19,8 @@ class LoginScreen extends StatelessWidget {
               _inputField(screenWidth, 'Password'),
               Padding(
                 padding: EdgeInsets.only(
-                    left: screenWidth * 0.1
-                    ), // Adjust padding to align with input fields
+                    left: screenWidth *
+                        0.1), // Adjust padding to align with input fields
                 child: _forgotPassword(),
               ),
               Padding(
@@ -29,7 +30,7 @@ class LoginScreen extends StatelessWidget {
                 child: _rememberMeCheckbox(),
               ),
               SizedBox(height: 300),
-              _actionButton(context, 'Login', Color(0xFF8846DF), '/login'),
+              _actionButton(context, 'Login', Color(0xFF8846DF)),
             ],
           ),
         ),
@@ -79,13 +80,17 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _actionButton(
-      BuildContext context, String text, Color color, String routeName) {
+  Widget _actionButton(BuildContext context, String text, Color color) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: ElevatedButton(
         onPressed: () {
-          Navigator.pushNamed(context, routeName); // Add navigation logic
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    HomeScreen()), // Directly navigating to HomeScreen
+          );
         },
         style: ElevatedButton.styleFrom(
           primary: color,
@@ -114,7 +119,6 @@ class LoginScreen extends StatelessWidget {
 
   Widget _forgotPassword() {
     return Align(
-      
       alignment: Alignment.centerLeft,
       child: TextButton(
         onPressed: () {

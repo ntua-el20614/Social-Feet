@@ -32,11 +32,9 @@ class Start extends StatelessWidget {
   Widget build(BuildContext context) {
     // Obtain the screen size
     var screenSize = MediaQuery.of(context).size;
-
-    // Calculate the width and height you want to use,
-    // you can adjust the percentage as needed to suit your layout
-    double containerWidth = screenSize.width; // 90% of the screen width
-    double containerHeight = screenSize.height; // 80% of the screen height, adjust as needed
+    
+    double containerWidth = screenSize.width; 
+    double containerHeight = screenSize.height; 
 
     return Scaffold(
       body: Center(
@@ -138,16 +136,3 @@ class Start extends StatelessWidget {
   }
 }
 
-Widget _actionButton(
-    BuildContext context, String text, Color color, String route) {
-  return ElevatedButton(
-    onPressed: () {
-      Navigator.pushNamed(context, route);
-    },
-    style: ElevatedButton.styleFrom(
-      primary: color,
-      minimumSize: Size(182, 43), // Set the size here
-    ),
-    child: Text(text),
-  );
-}
