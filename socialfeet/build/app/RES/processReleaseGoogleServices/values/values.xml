@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="gcm_defaultSenderId" translatable="false">325535902376</string>
-    <string name="google_api_key" translatable="false">AIzaSyB7PcozvBcbuAdjbG0yA7-0-fVC5hxCISo</string>
-    <string name="google_app_id" translatable="false">1:325535902376:android:69510ba919fee41d89f09d</string>
-    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyB7PcozvBcbuAdjbG0yA7-0-fVC5hxCISo</string>
-    <string name="google_storage_bucket" translatable="false">socialfeet-8238b.appspot.com</string>
-    <string name="project_id" translatable="false">socialfeet-8238b</string>
-</resources>
