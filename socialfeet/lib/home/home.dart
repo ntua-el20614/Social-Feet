@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:socialfeet/messages/messages.dart';
-import 'package:socialfeet/home/home.dart';
+//import 'package:socialfeet/home/home.dart';
 import 'package:socialfeet/map/map.dart';
 import 'package:socialfeet/profile/profile.dart';
 
+import 'package:socialfeet/home/buddy_profile.dart';
+import 'package:socialfeet/home/home_filter.dart';
 
 class UserProfile {
   final String name;
@@ -18,8 +20,18 @@ class UserProfile {
       this.showRun = false,
       this.showWalk = false});
 }
-
 class HomePage extends StatefulWidget {
+   bool filterBike;
+   bool filterRun;
+   bool filterWalk;
+
+  HomePage({
+    Key? key,
+    this.filterBike = true,
+    this.filterRun = true,
+    this.filterWalk = true,
+  }) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -29,26 +41,16 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 1; // Assuming 'Home' is the default selected item.
 
   final List<UserProfile> userProfiles = [
-    UserProfile(
-        name: 'Kennedy', showBike: true, showRun: false, showWalk: true),
-    UserProfile(
-        name: 'Joey Mills', showBike: true, showRun: false, showWalk: true),
-    UserProfile(
-        name: 'Elizabeth Bathory', showBike: true, showRun: false, showWalk: true),
-    UserProfile(
-        name: 'Alan Wake', showBike: true, showRun: false, showWalk: true),
-    UserProfile(
-        name: 'Rachel Forest', showBike: true, showRun: false, showWalk: true),
-    UserProfile(
-        name: 'Rachel Tree', showBike: true, showRun: false, showWalk: false),
-    UserProfile(
-        name: 'Anderson', showBike: false, showRun: false, showWalk: true),
-    UserProfile(
-        name: 'John Cena', showBike: true, showRun: true, showWalk: true),
-    UserProfile(
-        name: 'John Locke', showBike: false, showRun: true, showWalk: true),
-    UserProfile(
-        name: 'John Kennedy', showBike: true, showRun: true, showWalk: false),
+    UserProfile(name: 'Kennedy', showBike: false, showRun: false, showWalk: false), // we see no "kennedy"
+    UserProfile(name: 'Joey Mills', showBike: false, showRun: false, showWalk: true),
+    UserProfile(name: 'Elizabeth Bathory', showBike: false, showRun: true, showWalk: false),
+    UserProfile(name: 'Alan Wake', showBike: false, showRun: true, showWalk: true),
+    UserProfile(name: 'Rachel Forest', showBike: true, showRun: false, showWalk: false),
+    UserProfile(name: 'Rachel Tree', showBike: true, showRun: false, showWalk: true),
+    UserProfile(name: 'Anderson', showBike: true, showRun: true, showWalk: false),
+    UserProfile(name: 'John Cena', showBike: true, showRun: true, showWalk: true),
+    UserProfile(name: 'John Locke', showBike: false, showRun: true, showWalk: false),
+    UserProfile(name: 'John Kennedy', showBike: false, showRun: false, showWalk: true),
   ];
 
   void _onItemTapped(int index) {
@@ -76,8 +78,25 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  List<UserProfile> getFilteredProfiles() {
+    return userProfiles.where((profile) {
+      bool matchesFilter = false;
+      if (widget.filterBike && profile.showBike) {
+        matchesFilter = true;
+      }
+      if (widget.filterRun && profile.showRun) {
+        matchesFilter = true;
+      }
+      if (widget.filterWalk && profile.showWalk) {
+        matchesFilter = true;
+      }
+      return matchesFilter;
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         extendBody: true,
@@ -89,24 +108,46 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: TextField(
-        controller: searchController,
-        decoration: InputDecoration(
-          hintText: 'Choose your Buddy!',
-          border: InputBorder.none,
-        ),
+PreferredSizeWidget _buildAppBar(BuildContext context) {
+  return AppBar(
+    title: TextField(
+      controller: searchController,
+      decoration: InputDecoration(
+        hintText: 'Choose your Buddy!',
+        border: InputBorder.none,
       ),
-      leading: IconButton(
-        icon: Icon(Icons.filter_list),
-        onPressed: () {},
-      ),
-    );
-  }
+    ),
+    leading: IconButton(
+      icon: Icon(Icons.filter_list),
+      onPressed: () async {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeFilter(
+              filterBike: widget.filterBike,
+              filterRun: widget.filterRun,
+              filterWalk: widget.filterWalk,
+            ),
+          ),
+        );
+
+        if (result != null) {
+          setState(() {
+            widget.filterBike = result['filterBike'];
+            widget.filterRun = result['filterRun'];
+            widget.filterWalk = result['filterWalk'];
+          });
+        }
+      },
+    ),
+  );
+}
 
   Widget _buildBody(BuildContext context) {
+            List<UserProfile> filteredProfiles = getFilteredProfiles();
+
     return Container(
+      
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
@@ -138,13 +179,14 @@ class _HomePageState extends State<HomePage> {
                   crossAxisCount: 2,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 20,
+                  
                 ),
                 physics: BouncingScrollPhysics(),
-                itemCount: userProfiles.length,
+                itemCount: filteredProfiles.length,
                 itemBuilder: (context, index) {
                   return _buildCharacterCard(
                     context,
-                    profile: userProfiles[index],
+                    profile: filteredProfiles[index],
                     imageUrl: 'https://via.placeholder.com/155x95',
                   );
                 },
@@ -169,36 +211,48 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildCharacterCard(BuildContext context,
       {required UserProfile profile, required String imageUrl}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Image.network(imageUrl, fit: BoxFit.cover),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BuddyProfile(
+                name: profile.name,
+                showBike: profile.showBike,
+                showRun: profile.showRun,
+                showWalk: profile.showWalk,
+              ),
+            ));
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Image.network(imageUrl, fit: BoxFit.cover),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(profile.name,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              if (profile.showBike)
-                _buildActivityIcon(Icons.directions_bike, '🚴'),
-              if (profile.showRun) _buildActivityIcon(Icons.run_circle, '🏃'),
-              if (profile.showWalk)
-                _buildActivityIcon(Icons.directions_walk, '🚶'),
-            ],
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(profile.name,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
+            Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (profile.showBike) _buildActivityIcon(Icons.directions_bike, '🚴'),
+                if (profile.showRun) _buildActivityIcon(Icons.run_circle, '🏃'),
+                if (profile.showWalk) _buildActivityIcon(Icons.directions_walk, '🚶'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
