@@ -15,7 +15,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController searchController = TextEditingController();
-  int _selectedIndex = 0; // Assuming 'Home' is the default selected item.
+  int _selectedIndex = 3; // Assuming 'Home' is the default selected item.
 
 
 
@@ -103,13 +103,13 @@ class _ProfilePageState extends State<ProfilePage> {
             backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label: '',
             backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(Icons.map), label: ' ', backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: ' ',
+            label: 'Profile',
             backgroundColor: Colors.black),
       ],
       selectedItemColor: Colors.white,

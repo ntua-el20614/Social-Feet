@@ -97,11 +97,11 @@ class _MessagesPageState extends State<MessagesPage> {
       items: [
         BottomNavigationBarItem(
             icon: Icon(Icons.message),
-            label: ' ',
+            label: 'Messages',
             backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label: '',
             backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(Icons.map), label: ' ', backgroundColor: Colors.black),

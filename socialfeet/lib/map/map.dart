@@ -101,10 +101,10 @@ class _MapPageState extends State<MapPage> {
             backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label: '',
             backgroundColor: Colors.black),
         BottomNavigationBarItem(
-            icon: Icon(Icons.map), label: ' ', backgroundColor: Colors.black),
+            icon: Icon(Icons.map), label: 'Map', backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: ' ',
