@@ -1,0 +1,1 @@
+ C:\\Users\\chris\\Desktop\\socialfeet\\socialfeet\\.dart_tool\\flutter_build\\2448cc9269175d3ed4c3607667e5330f\\native_assets.yaml: 

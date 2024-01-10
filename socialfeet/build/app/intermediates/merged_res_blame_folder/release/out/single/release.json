@@ -1,0 +1,162 @@
+[
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable_notification_tile_bg.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable/notification_tile_bg.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable_notification_icon_background.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable/notification_icon_background.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.example.socialfeet.app-main-11:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable_notification_bg_low.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable/notification_bg_low.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-xhdpi-v4_notification_bg_low_normal.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-xhdpi-v4/notification_bg_low_normal.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/layout-v16_notification_template_custom_big.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/layout-v16/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-xhdpi-v4_notification_bg_low_pressed.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-xhdpi-v4/notification_bg_low_pressed.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-v21_launch_background.xml.flat",
+        "source": "com.example.socialfeet.app-main-11:/drawable-v21/launch_background.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.example.socialfeet.app-main-11:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable_launch_background.xml.flat",
+        "source": "com.example.socialfeet.app-main-11:/drawable/launch_background.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-mdpi-v4_notification_bg_normal_pressed.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-mdpi-v4/notification_bg_normal_pressed.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/layout-v21_notification_template_icon_group.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/layout-v21/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/layout-v21_notification_template_custom_big.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/layout_notification_template_part_chronometer.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/layout/notification_template_part_chronometer.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-hdpi-v4_notification_bg_low_normal.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-hdpi-v4/notification_bg_low_normal.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/layout_notification_template_part_time.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/layout/notification_template_part_time.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/xml_ga_ad_services_config.xml.flat",
+        "source": "com.example.socialfeet.app-jetified-play-services-measurement-api-21.5.0-5:/xml/ga_ad_services_config.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/raw_firebase_common_keep.xml.flat",
+        "source": "com.example.socialfeet.app-jetified-firebase-common-20.4.2-1:/raw/firebase_common_keep.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-xhdpi-v4_notify_panel_notification_icon_bg.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-xhdpi-v4/notify_panel_notification_icon_bg.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-mdpi-v4_notification_bg_low_pressed.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-mdpi-v4/notification_bg_low_pressed.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-hdpi-v4_notify_panel_notification_icon_bg.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-hdpi-v4/notify_panel_notification_icon_bg.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-mdpi-v4_notify_panel_notification_icon_bg.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-mdpi-v4/notify_panel_notification_icon_bg.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-mdpi-v4_notification_bg_normal.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-mdpi-v4/notification_bg_normal.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable_notification_bg.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable/notification_bg.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/layout_notification_action.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/layout/notification_action.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.example.socialfeet.app-main-11:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-hdpi-v4_notification_bg_normal.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-hdpi-v4/notification_bg_normal.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/layout-v21_notification_action_tombstone.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/layout-v21/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/layout-v21_notification_action.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-xhdpi-v4_notification_bg_normal.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-xhdpi-v4/notification_bg_normal.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/layout_custom_dialog.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/layout/custom_dialog.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/layout_notification_template_icon_group.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/layout/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-hdpi-v4_notification_bg_normal_pressed.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-hdpi-v4/notification_bg_normal_pressed.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-xhdpi-v4_notification_bg_normal_pressed.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-xhdpi-v4/notification_bg_normal_pressed.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-hdpi-v4_notification_bg_low_pressed.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-hdpi-v4/notification_bg_low_pressed.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.example.socialfeet.app-main-11:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-mdpi-v4_notification_bg_low_normal.9.png.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-mdpi-v4/notification_bg_low_normal.9.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.example.socialfeet.app-main-11:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/drawable-v21_notification_action_background.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/drawable-v21/notification_action_background.xml"
+    },
+    {
+        "merged": "com.example.socialfeet.app-merged_res-18:/layout_notification_action_tombstone.xml.flat",
+        "source": "com.example.socialfeet.app-core-1.9.0-8:/layout/notification_action_tombstone.xml"
+    }
+]

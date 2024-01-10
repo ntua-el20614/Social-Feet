@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.socialfeet.app-mergeDebugResources-9:/values-pt/values-pt.xml",
+            "outputFile": "com.example.socialfeet.app-mergeDebugResources-16:/values-pt/values-pt.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\chris\\.gradle\\caches\\transforms-3\\d08c73bfb05384f2e52578171dbd141e\\transformed\\core-1.6.0\\res\\values-pt\\values-pt.xml",
+                    "source": "C:\\Users\\chris\\.gradle\\caches\\transforms-3\\d9a7bda5b0a0d2fc08828ff145bfcb70\\transformed\\core-1.9.0\\res\\values-pt\\values-pt.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

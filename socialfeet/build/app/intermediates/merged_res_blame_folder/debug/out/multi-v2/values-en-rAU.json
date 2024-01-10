@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.socialfeet.app-mergeDebugResources-9:/values-en-rAU/values-en-rAU.xml",
+            "outputFile": "com.example.socialfeet.app-mergeDebugResources-16:/values-en-rAU/values-en-rAU.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\chris\\.gradle\\caches\\transforms-3\\d08c73bfb05384f2e52578171dbd141e\\transformed\\core-1.6.0\\res\\values-en-rAU\\values-en-rAU.xml",
+                    "source": "C:\\Users\\chris\\.gradle\\caches\\transforms-3\\d9a7bda5b0a0d2fc08828ff145bfcb70\\transformed\\core-1.9.0\\res\\values-en-rAU\\values-en-rAU.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

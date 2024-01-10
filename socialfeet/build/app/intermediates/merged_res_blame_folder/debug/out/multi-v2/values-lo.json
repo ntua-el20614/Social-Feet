@@ -1,16 +1,40 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.socialfeet.app-mergeDebugResources-9:/values-lo/values-lo.xml",
+            "outputFile": "com.example.socialfeet.app-mergeDebugResources-16:/values-lo/values-lo.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\chris\\.gradle\\caches\\transforms-3\\d08c73bfb05384f2e52578171dbd141e\\transformed\\core-1.6.0\\res\\values-lo\\values-lo.xml",
+                    "source": "C:\\Users\\chris\\.gradle\\caches\\transforms-3\\d9a7bda5b0a0d2fc08828ff145bfcb70\\transformed\\core-1.9.0\\res\\values-lo\\values-lo.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
                         "startOffsets": "55",
                         "endColumns": "100",
                         "endOffsets": "151"
+                    },
+                    "to": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "187",
+                        "endColumns": "100",
+                        "endOffsets": "283"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\chris\\.gradle\\caches\\transforms-3\\55b4e390742817dc4b9653e42d791034\\transformed\\jetified-play-services-basement-18.1.0\\res\\values-lo\\values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "195",
+                        "endColumns": "127",
+                        "endOffsets": "322"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "131",
+                        "endOffsets": "182"
                     }
                 }
             ]
