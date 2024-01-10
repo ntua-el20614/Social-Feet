@@ -33,7 +33,7 @@ class _MapPageState extends State<MapPage> {
         break;
       case 2:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MapPage()));
+            context, MaterialPageRoute(builder: (context) => MessagesPage()));
         break;
       case 3:
         Navigator.push(
