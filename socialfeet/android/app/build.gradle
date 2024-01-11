@@ -67,5 +67,12 @@ flutter {
 
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-    implementation("com.google.firebase:firebase-analytics")
+
+    // Add the Firebase SDK for Google Analytics
+    implementation 'com.google.firebase:firebase-analytics'
+
+    // Add the required Firebase libraries for Realtime Database
+    implementation 'com.google.firebase:firebase-database'
 }
+
+apply plugin: 'com.google.gms.google-services'

@@ -1,40 +1,22 @@
 {
   "project_info": {
-    "project_number": "325535902376",
-    "project_id": "socialfeet-8238b",
-    "storage_bucket": "socialfeet-8238b.appspot.com"
+    "project_number": "929512699295",
+    "firebase_url": "https://social-10695-default-rtdb.firebaseio.com",
+    "project_id": "social-10695",
+    "storage_bucket": "social-10695.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:325535902376:android:69510ba919fee41d89f09d",
+        "mobilesdk_app_id": "1:929512699295:android:540d5b4e821bb4a629b9aa",
         "android_client_info": {
-          "package_name": "com.example.socialfeet"
+          "package_name": "com.android.application"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB7PcozvBcbuAdjbG0yA7-0-fVC5hxCISo"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:325535902376:android:4d5f1f29c623951789f09d",
-        "android_client_info": {
-          "package_name": "pellouiscompany.com"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyB7PcozvBcbuAdjbG0yA7-0-fVC5hxCISo"
+          "current_key": "AIzaSyB137Xhp885zsVtv1veprfwbBGUQKr_Ia0"
         }
       ],
       "services": {
