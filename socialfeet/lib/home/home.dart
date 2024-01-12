@@ -19,26 +19,33 @@ Future<List<UserProfile>> fetchUserProfilesFromDatabase() async {
         event.snapshot.value as Map<dynamic, dynamic>;
     usersMap.forEach((key, value) {
       var user = UserProfile(
-        name: value['username'] ??
+        name: value['fullname'] ??
             'Unknown', // Replace 'Unknown' with a default name if username is not present
+        username: value['username'],
         showBike: value['bicycle']['enabled'] ?? false,
         showRun: value['running']['enabled'] ?? false,
         showWalk: value['walking']['enabled'] ?? false,
       );
       userProfiles.add(user);
     });
+  }else{
+    print("No users found!");
   }
   return userProfiles;
 }
 
 class UserProfile {
   final String name;
+  final String username; 
+
   final bool showBike;
   final bool showRun;
   final bool showWalk;
 
   UserProfile(
       {required this.name,
+          required this.username, 
+
       this.showBike = false,
       this.showRun = false,
       this.showWalk = false});
@@ -87,8 +94,7 @@ class _HomePageState extends State<HomePage> {
 
   void loadUserProfiles() async {
     List<UserProfile> profiles = await fetchUserProfilesFromDatabase();
-    for (var profile in profiles) { 
-
+    for (var profile in profiles) {
       print(
           "Profile: ${profile.name}, Bike: ${profile.showBike}, Run: ${profile.showRun}, Walk: ${profile.showWalk}");
     }
@@ -260,15 +266,14 @@ class _HomePageState extends State<HomePage> {
     return InkWell(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BuddyProfile(
-                name: profile.name,
-                showBike: profile.showBike,
-                showRun: profile.showRun,
-                showWalk: profile.showWalk,
-              ),
-            ));
+          context,
+          MaterialPageRoute(
+            builder: (context) => BuddyProfile(
+              username:
+                  profile.username, // Pass the encoded email identifier
+            ),
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecoration(

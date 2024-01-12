@@ -1,128 +1,132 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-class BuddyProfile extends StatelessWidget {
-  final String name;
-  final bool showBike;
-  final bool showRun;
-  final bool showWalk;
-  final double bikeSpeed;
-  final double bikeDistance;
-  final double runSpeed;
-  final double runDistance;
-  final double walkSpeed;
-  final double walkDistance;
+class BuddyProfile extends StatefulWidget {
+  final String username;
 
-  BuddyProfile({
-    Key? key,
-    required this.name,
-    this.showBike = false,
-    this.showRun = false,
-    this.showWalk = false,
-    this.bikeSpeed = 0.0,
-    this.bikeDistance = 0.0,
-    this.runSpeed = 0.0,
-    this.runDistance = 0.0,
-    this.walkSpeed = 0.0,
-    this.walkDistance = 0.0,
-  }) : super(key: key);
+  BuddyProfile({Key? key, required this.username}) : super(key: key);
+
+  @override
+  _BuddyProfileState createState() => _BuddyProfileState();
+}
+
+class _BuddyProfileState extends State<BuddyProfile> {
+  String name = "";
+  bool showBike = false;
+  bool showRun = false;
+  bool showWalk = false;
+  double bikeSpeed = 0.0;
+  double bikeDistance = 0.0;
+  double runSpeed = 0.0;
+  double runDistance = 0.0;
+  double walkSpeed = 0.0;
+  double walkDistance = 0.0;
+  String aboutMe = "";
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  void fetchUserData() async {
+    DatabaseReference userRef = FirebaseDatabase.instance.ref('users/${widget.username}');
+    DatabaseEvent event = await userRef.once();
+
+    if (event.snapshot.exists) {
+      var userData = event.snapshot.value as Map<dynamic, dynamic>;
+      setState(() {
+        name = userData['fullname'] ?? '';
+        showBike = userData['bicycle']['enabled'] ?? false;
+        bikeSpeed = userData['bicycle']['speed']?.toDouble() ?? 0.0;
+        bikeDistance = userData['bicycle']['distance']?.toDouble() ?? 0.0;
+        showRun = userData['running']['enabled'] ?? false;
+        runSpeed = userData['running']['speed']?.toDouble() ?? 0.0;
+        runDistance = userData['running']['distance']?.toDouble() ?? 0.0;
+        showWalk = userData['walking']['enabled'] ?? false;
+        walkSpeed = userData['walking']['speed']?.toDouble() ?? 0.0;
+        walkDistance = userData['walking']['distance']?.toDouble() ?? 0.0;
+        aboutMe = userData['aboutMe'] ?? '';
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment(1, 0),
-            end: Alignment(0, 1),
-            colors: [
-              Colors.teal.withOpacity(0.4),
-              Colors.deepPurple.withOpacity(0.4)
-            ],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 75, 16, 0),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_back, size: 30),
-                    onPressed: () => Navigator.of(context).pop(),
+    return isLoading
+      ? Center(child: CircularProgressIndicator())
+      : Scaffold(
+          body: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(1, 0),
+                end: Alignment(0, 1),
+                colors: [
+                  Colors.teal.withOpacity(0.4),
+                  Colors.deepPurple.withOpacity(0.4)
+                ],
+              ),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 75, 16, 0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_back, size: 30),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ),
                   ),
-                ),
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.white,
+                    child: CircleAvatar(
+                      radius: 55,
+                      backgroundImage: NetworkImage(""), // Placeholder image
+                      backgroundColor: Colors.grey,
+                    )),
+                  SizedBox(height: 20),
+                  Text(
+                    name,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    aboutMe,
+                    style: TextStyle(fontSize: 18, color: Colors.black.withOpacity(0.6)),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {}, // Implement message button action
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      shape: CircleBorder(),
+                    ),
+                    child: Text(
+                      '💬',
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  if (showBike) _buildActivityBox('Biking🚴', bikeSpeed, bikeDistance),
+                  SizedBox(height: 20),
+                  if (showRun) _buildActivityBox('Running🏃', runSpeed, runDistance),
+                  SizedBox(height: 20),
+                  if (showWalk) _buildActivityBox('Walking🚶', walkSpeed, walkDistance),
+                  SizedBox(height: 20),
+                ],
               ),
-              // ... existing widgets ...
-              CircleAvatar(
-                radius: 60,
-                backgroundColor: Colors.white, // Border color
-                child: CircleAvatar(
-                  radius: 55, // Slightly smaller to show the white border
-                  backgroundImage: NetworkImage(""), // Use imagePath for profile picture
-                  backgroundColor: Colors.grey, // Placeholder color if the image fails to load
-                )),
-              SizedBox(height: 20),
-              Text(
-                name,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Text(
-                "21 years old, lives in Athens",
-                style: TextStyle(
-                    fontSize: 18, color: Colors.black.withOpacity(0.6)),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {}, // Implement message button action
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.white,
-                  shape: CircleBorder(),
-                ),
-                child: Text(
-                  '💬',
-                  style: TextStyle(fontSize: 24),
-                ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                padding: EdgeInsets.all(10),
-                margin: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.1),
-                decoration: _boxDecoration(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("about me",
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.black.withOpacity(0.6))),
-                    SizedBox(height: 5),
-                    Text("is something important"),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              SizedBox(height: 20),
-              
-              if (showBike)
-                _buildActivityBox('Biking🚴', bikeSpeed, bikeDistance),
-              SizedBox(height: 20),
-              if (showRun) _buildActivityBox('Running🏃', runSpeed, runDistance),
-              SizedBox(height: 20),
-              if (showWalk)
-                _buildActivityBox('Walking🚶', walkSpeed, walkDistance),
-              SizedBox(height: 20),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
   Widget _buildActivityBox(String activity, double speed, double distance) {
@@ -133,8 +137,7 @@ class BuddyProfile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$activity',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text('$activity', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Text('Average Speed: ${speed.toStringAsFixed(2)} km/h'),
           Text('Total Distance: ${distance.toStringAsFixed(2)} km'),
         ],
@@ -156,6 +159,4 @@ class BuddyProfile extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
     );
   }
-
-   
 }
