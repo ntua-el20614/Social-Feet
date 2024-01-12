@@ -1,21 +1,89 @@
 import 'package:flutter/material.dart';
-
 //import 'package:socialfeet/messages/messages.dart';
 import 'package:socialfeet/home/home.dart';
 import 'package:socialfeet/map/map.dart';
 import 'package:socialfeet/profile/profile.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import "package:firebase_database/firebase_database.dart" show DatabaseEvent, DatabaseReference, FirebaseDatabase;
 
 class MessagesPage extends StatefulWidget {
   @override
   _MessagesPageState createState() => _MessagesPageState();
 }
 
+class Message {
+  String senderId;
+  String text;
+  DateTime timestamp;
+  bool isRead;
+
+  Message({required this.senderId, required this.text, required this.timestamp, this.isRead = false});
+}
+
+class ChatSummary {
+  String userName;
+  String lastMessage;
+  String profileImageUrl;
+  int unreadCount;
+  DateTime lastMessageTime;
+
+  ChatSummary({
+    required this.userName,
+    required this.lastMessage,
+    required this.profileImageUrl,
+    required this.unreadCount,
+    required this.lastMessageTime,
+  });
+}
+
+class FirebaseService {
+  Future<List<ChatSummary>> fetchChatSummaries(String currentUserId) async {
+    DatabaseReference chatsRef = FirebaseDatabase.instance.ref('chats/$currentUserId');
+    DatabaseEvent event = await chatsRef.once();
+
+    List<ChatSummary> chatSummaries = [];
+    if (event.snapshot.exists) {
+      Map<dynamic, dynamic> chatsMap = 
+        event.snapshot.value as Map<dynamic, dynamic>;
+      chatsMap.forEach((key, value) {
+        ChatSummary summary = ChatSummary(
+          userName: value['userName'],
+          lastMessage: value['lastMessage'],
+          profileImageUrl: value['profileImageUrl'],
+          unreadCount: value['unreadCount'],
+          lastMessageTime: DateTime.parse(value['lastMessageTime']),
+        );
+        chatSummaries.add(summary);
+      });
+    } else{
+      print("No chats found!");
+    }
+    chatSummaries.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
+    return chatSummaries;
+  }
+}
+
 class _MessagesPageState extends State<MessagesPage> {
   final TextEditingController searchController = TextEditingController();
   int _selectedIndex = 0; // Assuming 'Home' is the default selected item.
 
+  List<ChatSummary> chatSummaries = [];
+  bool isLoading = true;
 
+  @override
+  void initState() {
+    super.initState();
+    loadChatSummaries();
+  }
+
+  void loadChatSummaries() async {
+    String currentUserId = 'current_user_id'; // Replace with actual ID     TO DO
+    List<ChatSummary> summaries = await FirebaseService().fetchChatSummaries(currentUserId);
+    setState(() {
+      chatSummaries = summaries;
+      isLoading = false;
+    });
+}
 
   void _onItemTapped(int index) {
     setState(() {
@@ -41,7 +109,7 @@ class _MessagesPageState extends State<MessagesPage> {
         break;
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -55,46 +123,58 @@ class _MessagesPageState extends State<MessagesPage> {
     );
   }
 
-
-
-  Widget _buildBody(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black, width: 3),
-        gradient: LinearGradient(
-          begin: Alignment(1, 0),
-          end: Alignment(0, 1),
-          colors: [
-            Colors.teal.withOpacity(0.75),
-            Colors.deepPurple.withOpacity(0.75)
-          ],
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            color: Colors.green.withOpacity(0.3),
-            width: double.infinity,
-            padding: EdgeInsets.all(10),
-
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              
-            ),
-          ),
-        ],
-      ),
-    );
+Widget _buildBody(BuildContext context) {
+  if (isLoading) {
+    return Center(child: CircularProgressIndicator());
+  } else if (chatSummaries.isEmpty) {
+    return Center(child: Text("No messages yet."));
   }
- 
-  Widget _buildBottomBar() {
+
+  return Container(
+    // Existing decoration code...
+    child: Column(
+      children: [
+        // Existing search bar code...
+        Expanded(
+          child: ListView.builder(
+            itemCount: chatSummaries.length, // Use the length of your chat summaries list
+            itemBuilder: (context, index) {
+              final chatSummary = chatSummaries[index];
+              final timeAgo = _calculateTimeAgo(chatSummary.lastMessageTime);
+              
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(chatSummary.profileImageUrl),
+                ),
+                title: Text(chatSummary.userName),
+                subtitle: Text(chatSummary.lastMessage),
+                trailing: Text(timeAgo),
+              );
+            },
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+String _calculateTimeAgo(DateTime dateTime) {
+  final Duration difference = DateTime.now().difference(dateTime);
+
+  if (difference.inMinutes < 1) {
+    return 'just now';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes} min';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours}h';
+  } else {
+    return '${difference.inDays}d';
+  }
+}
+
+    Widget _buildBottomBar() {
     return BottomNavigationBar(
-      items: [
+      items: const [
         BottomNavigationBarItem(
             icon: Icon(Icons.message),
             label: 'Messages',
