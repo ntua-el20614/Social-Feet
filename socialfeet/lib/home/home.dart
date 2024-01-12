@@ -203,7 +203,7 @@ class _HomePageState extends State<HomePage> {
           begin: Alignment(1, 0),
           end: Alignment(0, 1),
           colors: [
-            Colors.teal.withOpacity(0.75),
+            Colors.teal.withOpacity(0.25),
             Colors.deepPurple.withOpacity(0.75)
           ],
         ),
