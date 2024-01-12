@@ -35,11 +35,10 @@ class ProfilePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => EditProfileScreen(),
-                ),
-              );
+              
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
+
             },
           ),
         ],
@@ -120,7 +119,7 @@ class ProfilePage extends StatelessWidget {
               ),
               SizedBox(height: 16),
               Text(
-                'Athens', // Replace with dynamic data if available
+                '${user.location}', // Replace with dynamic data if available
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
@@ -136,19 +135,19 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildActivityIcons(UserData user) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (user.showBike)
-          Icon(Icons.directions_bike, color: Colors.white, size: 24),
-        if (user.showRun) Icon(Icons.run_circle, color: Colors.white, size: 24),
-        if (user.showWalk)
-          Icon(Icons.directions_walk, color: Colors.white, size: 24),
-      ],
-    );
-  }
+Widget _buildActivityIcons(UserData user) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      if (user.showBike)
+        Text('🚴', style: TextStyle(fontSize: 24)),
+      if (user.showRun) 
+        Text('🏃', style: TextStyle(fontSize: 24)),
+      if (user.showWalk)
+        Text('🚶', style: TextStyle(fontSize: 24)),
+    ],
+  );
+}
 
   Widget _buildAboutMeSection(String aboutMe) {
     return Container(
@@ -251,6 +250,7 @@ class UserData {
   String name;
   String email;
   String profileImageUrl;
+  String location;
   bool showBike;
   bool showRun;
   bool showWalk;
@@ -260,6 +260,7 @@ class UserData {
     required this.name,
     required this.email,
     required this.profileImageUrl,
+    required this.location,
     required this.showBike,
     required this.showRun,
     required this.showWalk,
@@ -272,6 +273,8 @@ class UserData {
       email: data['email'] ?? 'No Email',
       profileImageUrl:
           data['profileImageUrl'] ?? 'https://via.placeholder.com/150',
+      location:
+          data['location'] ?? '',
       showBike: data['bicycle']['enabled'] ?? false,
       showRun: data['running']['enabled'] ?? false,
       showWalk: data['walking']['enabled'] ?? false,
