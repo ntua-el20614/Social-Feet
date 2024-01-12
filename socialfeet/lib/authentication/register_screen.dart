@@ -1,15 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:socialfeet/home/home.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class RegisterScreen extends StatelessWidget {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController fullnameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final TextEditingController dobController =
+      TextEditingController(); // Date of Birth
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
+
+  Future<bool> registerUser(context, String email, String password,
+      String fullname, String username) async {
+    try {
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      _saveUserDataToDatabase(email, username, fullname);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Successful Registration")),
+      );
+      return true;
+    } on FirebaseAuthException catch (e) {
+      // Handle specific Firebase Auth errors here
+      final String errorMessage = e.message ?? "Unknown error occurred";
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $errorMessage")),
+      );
+      return false;
+    } catch (e) {
+      // Handle other errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("General Error: $e")),
+      );
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
 
-    double containerWidth = screenSize.width; // 90% of the screen width
-    double containerHeight =
-        screenSize.height; // 80% of the screen height, adjust as needed
+    double containerWidth = screenSize.width;
+    double containerHeight = screenSize.height;
 
     double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Container(
         width: containerWidth,
@@ -19,26 +63,27 @@ class RegisterScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 100), // Adjust as needed
-              _welcomeBox(),
+              SizedBox(height: 100),
+              _welcomeBox(context),
               SizedBox(height: 20),
-              _inputField(screenWidth, 'Name'),
-              _inputField(screenWidth, 'Surname'),
-              _inputField(screenWidth, 'Email / Phone'),
-              _inputField(screenWidth, 'Password', isPassword: true),
-              _inputField(screenWidth, 'Confirm Password', isPassword: true),
-              _inputField(screenWidth,
-                  'Date of Birth'), // Adjust for date picker or similar
+              _inputField(screenWidth, 'Username', usernameController),
+              _inputField(screenWidth, 'Fullname', fullnameController),
+              _inputField(screenWidth, 'Email / Phone', emailController),
+              _inputField(screenWidth, 'Password', passwordController,
+                  isPassword: true),
+              _inputField(
+                  screenWidth, 'Confirm Password', confirmPasswordController,
+                  isPassword: true),
+              _inputField(screenWidth, 'Date of Birth', dobController),
               SizedBox(height: 30),
               Text(
                 'By registering, you are agreeing to our\nTerms of Use and Privacy Policy.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14, // Smaller font size
-                  fontWeight: FontWeight.bold, // Bolder text
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-
               SizedBox(height: 30),
               _registerButton(context),
             ],
@@ -48,7 +93,7 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  Widget _welcomeBox() {
+  Widget _welcomeBox(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       color: Color.fromARGB(70, 54, 221, 166),
@@ -58,7 +103,7 @@ class RegisterScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
-              // Go back logic
+              Navigator.pop(context);
             },
           ),
           Text('Welcome!',
@@ -72,12 +117,14 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  Widget _inputField(double screenWidth, String label,
+  Widget _inputField(
+      double screenWidth, String label, TextEditingController controller,
       {bool isPassword = false}) {
     return Container(
       width: screenWidth * 0.8,
       margin: EdgeInsets.only(top: 20),
       child: TextFormField(
+        controller: controller,
         decoration: InputDecoration(
           labelText: label,
           fillColor: Colors.white,
@@ -93,8 +140,31 @@ class RegisterScreen extends StatelessWidget {
 
   Widget _registerButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        // Registration logic
+      onPressed: () async {
+        final String email = emailController.text.trim();
+        final String password = passwordController.text.trim();
+        final String username = usernameController.text.trim();
+        final String fullname = fullnameController.text.trim();
+
+        bool isRegistered =
+            await registerUser(context, email, password, fullname, username);
+        if (isRegistered) {
+          _saveUserDataToDatabase(email, username, fullname);
+          if (isRegistered) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("User registered successfully!")),
+            );
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Invalid input or password mismatch")),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         primary: Color(0xFF36DDA6),
@@ -118,5 +188,41 @@ class RegisterScreen extends StatelessWidget {
         colors: [Color(0x4C36DDA6), Color(0x4C8846DF)],
       ),
     );
+  }
+
+  void _saveUserDataToDatabase(String email, String username, String fullname) {
+    // Encode the email to be a valid Firebase key
+    try {
+      String encodedEmail = email.split('@').first.replaceAll('.', ',');
+      DatabaseReference userRef = _database.ref("users/$encodedEmail");
+
+      userRef.set({
+        'email': email,
+        'aboutMe': '',
+        'username': username,
+        'fullname': fullname,
+        'running': {
+          'distance': 0,
+          'enabled': false,
+          'speed': 0,
+        },
+        'bicycle': {
+          'distance': 0,
+          'enabled': false,
+          'speed': 0,
+        },
+        'walking': {
+          'distance': 0,
+          'enabled': false,
+          'speed': 0,
+        },
+      }).then((_) {
+        print("User data saved successfully");
+      }).catchError((error) {
+        print("Error saving user data: $error");
+      });
+    } catch (e) {
+      print("An exception occurred: $e");
+    }
   }
 }

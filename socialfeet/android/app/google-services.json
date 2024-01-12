@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "325535902376",
-    "project_id": "socialfeet-8238b",
-    "storage_bucket": "socialfeet-8238b.appspot.com"
+    "project_number": "296073509007",
+    "project_id": "socialfeet-c8776",
+    "storage_bucket": "socialfeet-c8776.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:325535902376:android:69510ba919fee41d89f09d",
+        "mobilesdk_app_id": "1:296073509007:android:6c3a6cc4b4282b908b98fa",
         "android_client_info": {
           "package_name": "com.example.socialfeet"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB7PcozvBcbuAdjbG0yA7-0-fVC5hxCISo"
+          "current_key": "AIzaSyDVArLwO0fheGQmM9xnrvuthynephlWjEE"
         }
       ],
       "services": {
@@ -26,15 +26,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:325535902376:android:4d5f1f29c623951789f09d",
+        "mobilesdk_app_id": "1:296073509007:android:9ea2c4e931ed739e8b98fa",
         "android_client_info": {
-          "package_name": "pellouiscompany.com"
+          "package_name": "ntua.com"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB7PcozvBcbuAdjbG0yA7-0-fVC5hxCISo"
+          "current_key": "AIzaSyDVArLwO0fheGQmM9xnrvuthynephlWjEE"
         }
       ],
       "services": {

@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
-
 import '/authentication/login_screen.dart';
 import '/authentication/register_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: "AIzaSyDVArLwO0fheGQmM9xnrvuthynephlWjEE", // Replace with your apiKey
+      appId: "1:296073509007:android:6c3a6cc4b4282b908b98fa", // Replace with your mobilesdk_app_id
+      messagingSenderId: "296073509007", // Replace with your project_number
+      projectId: "socialfeet-c8776", // Replace with your project_id
+      databaseURL: 'https://socialfeet-c8776-default-rtdb.europe-west1.firebasedatabase.app',
+    ),
+  );
+  runApp(MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  @override
-  Widget build(BuildContext context) {
+  @override 
+  Widget  build(BuildContext context) {
     return MaterialApp(
       title: 'SocialFeet',
       theme: ThemeData(
@@ -26,8 +38,9 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
+ 
 class Start extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
     // Obtain the screen size

@@ -25,7 +25,7 @@ class _MapPageState extends State<MapPage> {
     switch (index) {
       case 0:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MapPage()));
+            context, MaterialPageRoute(builder: (context) => MessagesPage()));
         break;
       case 1:
         Navigator.push(
@@ -33,7 +33,7 @@ class _MapPageState extends State<MapPage> {
         break;
       case 2:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MessagesPage()));
+            context, MaterialPageRoute(builder: (context) => MapPage()));
         break;
       case 3:
         Navigator.push(

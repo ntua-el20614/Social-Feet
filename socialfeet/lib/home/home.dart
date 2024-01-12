@@ -7,6 +7,29 @@ import 'package:socialfeet/profile/profile.dart';
 
 import 'package:socialfeet/home/buddy_profile.dart';
 import 'package:socialfeet/home/home_filter.dart';
+import 'package:firebase_database/firebase_database.dart';
+
+Future<List<UserProfile>> fetchUserProfilesFromDatabase() async {
+  DatabaseReference usersRef = FirebaseDatabase.instance.ref('users');
+  DatabaseEvent event = await usersRef.once();
+  List<UserProfile> userProfiles = [];
+
+  if (event.snapshot.exists) {
+    Map<dynamic, dynamic> usersMap =
+        event.snapshot.value as Map<dynamic, dynamic>;
+    usersMap.forEach((key, value) {
+      var user = UserProfile(
+        name: value['username'] ??
+            'Unknown', // Replace 'Unknown' with a default name if username is not present
+        showBike: value['bicycle']['enabled'] ?? false,
+        showRun: value['running']['enabled'] ?? false,
+        showWalk: value['walking']['enabled'] ?? false,
+      );
+      userProfiles.add(user);
+    });
+  }
+  return userProfiles;
+}
 
 class UserProfile {
   final String name;
@@ -20,10 +43,11 @@ class UserProfile {
       this.showRun = false,
       this.showWalk = false});
 }
+
 class HomePage extends StatefulWidget {
-   bool filterBike;
-   bool filterRun;
-   bool filterWalk;
+  bool filterBike;
+  bool filterRun;
+  bool filterWalk;
 
   HomePage({
     Key? key,
@@ -39,7 +63,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController searchController = TextEditingController();
   int _selectedIndex = 1; // Assuming 'Home' is the default selected item.
-
+/*
   final List<UserProfile> userProfiles = [
     UserProfile(name: 'Kennedy', showBike: false, showRun: false, showWalk: false), // we see no "kennedy"
     UserProfile(name: 'Joey Mills', showBike: false, showRun: false, showWalk: true),
@@ -51,7 +75,27 @@ class _HomePageState extends State<HomePage> {
     UserProfile(name: 'John Cena', showBike: true, showRun: true, showWalk: true),
     UserProfile(name: 'John Locke', showBike: false, showRun: true, showWalk: false),
     UserProfile(name: 'John Kennedy', showBike: false, showRun: false, showWalk: true),
-  ];
+  ]*/
+
+  List<UserProfile> userProfiles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserProfiles();
+  }
+
+  void loadUserProfiles() async {
+    List<UserProfile> profiles = await fetchUserProfilesFromDatabase();
+    for (var profile in profiles) { 
+
+      print(
+          "Profile: ${profile.name}, Bike: ${profile.showBike}, Run: ${profile.showRun}, Walk: ${profile.showWalk}");
+    }
+    setState(() {
+      userProfiles = profiles; // Update the state with fetched profiles
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -96,7 +140,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
         extendBody: true,
@@ -108,46 +151,50 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-PreferredSizeWidget _buildAppBar(BuildContext context) {
-  return AppBar(
-    title: TextField(
-      controller: searchController,
-      decoration: InputDecoration(
-        hintText: 'Choose your Buddy!',
-        border: InputBorder.none,
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: TextField(
+        controller: searchController,
+        decoration: InputDecoration(
+          hintText: 'Choose your Buddy!',
+          border: InputBorder.none,
+        ),
       ),
-    ),
-    leading: IconButton(
-      icon: Icon(Icons.filter_list),
-      onPressed: () async {
-        final result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomeFilter(
-              filterBike: widget.filterBike,
-              filterRun: widget.filterRun,
-              filterWalk: widget.filterWalk,
+      leading: IconButton(
+        icon: Icon(Icons.filter_list),
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomeFilter(
+                filterBike: widget.filterBike,
+                filterRun: widget.filterRun,
+                filterWalk: widget.filterWalk,
+              ),
             ),
-          ),
-        );
+          );
 
-        if (result != null) {
-          setState(() {
-            widget.filterBike = result['filterBike'];
-            widget.filterRun = result['filterRun'];
-            widget.filterWalk = result['filterWalk'];
-          });
-        }
-      },
-    ),
-  );
-}
+          if (result != null) {
+            setState(() {
+              widget.filterBike = result['filterBike'];
+              widget.filterRun = result['filterRun'];
+              widget.filterWalk = result['filterWalk'];
+            });
+          }
+        },
+      ),
+    );
+  }
 
   Widget _buildBody(BuildContext context) {
-            List<UserProfile> filteredProfiles = getFilteredProfiles();
+    if (userProfiles.isEmpty) {
+      return Center(
+          child:
+              CircularProgressIndicator()); // Show loading indicator while data is loading
+    }
+    List<UserProfile> filteredProfiles = getFilteredProfiles();
 
     return Container(
-      
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
@@ -179,7 +226,6 @@ PreferredSizeWidget _buildAppBar(BuildContext context) {
                   crossAxisCount: 2,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 20,
-                  
                 ),
                 physics: BouncingScrollPhysics(),
                 itemCount: filteredProfiles.length,
@@ -246,9 +292,11 @@ PreferredSizeWidget _buildAppBar(BuildContext context) {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                if (profile.showBike) _buildActivityIcon(Icons.directions_bike, '🚴'),
+                if (profile.showBike)
+                  _buildActivityIcon(Icons.directions_bike, '🚴'),
                 if (profile.showRun) _buildActivityIcon(Icons.run_circle, '🏃'),
-                if (profile.showWalk) _buildActivityIcon(Icons.directions_walk, '🚶'),
+                if (profile.showWalk)
+                  _buildActivityIcon(Icons.directions_walk, '🚶'),
               ],
             ),
           ],
