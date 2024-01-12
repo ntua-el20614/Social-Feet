@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:socialfeet/authentication/login_screen.dart';
+import 'package:socialfeet/main.dart';
 import 'package:socialfeet/profile/editProfile.dart';
 
+import 'package:socialfeet/messages/messages.dart';
+import 'package:socialfeet/home/home.dart';
+import 'package:socialfeet/map/map.dart';
+//import 'package:socialfeet/profile/profile.dart';
+
 class ProfilePage extends StatelessWidget {
+  int _selectedIndex = 3; // Assuming 'Home' is the default selected item.
+
   @override
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
@@ -17,9 +24,12 @@ class ProfilePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => LoginScreen(),
-              ));
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Start()),
+                (Route<dynamic> route) =>
+                    false, // This predicate will always return false, thus clearing all previous routes
+              );
             },
           ),
           IconButton(
@@ -49,30 +59,32 @@ class ProfilePage extends StatelessWidget {
           }
         },
       ),
-      bottomNavigationBar: _buildBottomBar(),
+      bottomNavigationBar: _buildBottomBar(context),
     );
   }
-  Future<UserData> _getUserData(FirebaseAuth auth, DatabaseReference usersRef) async {
-  User? currentUser = auth.currentUser;
-  if (currentUser == null || currentUser.email == null) {
-    throw Exception("User not logged in or email not available");
-  }
 
-  Query query = usersRef.orderByChild('email').equalTo(currentUser.email);
-  DatabaseEvent event = await query.once();
-  DataSnapshot snapshot = event.snapshot;
-  
-  if (snapshot.exists && snapshot.value is Map) {
-    Map<dynamic, dynamic> usersMap = snapshot.value as Map<dynamic, dynamic>;
-    if (usersMap.isNotEmpty) {
-      Map<dynamic, dynamic> userData = usersMap.values.first;
-      return UserData.fromMap(userData as Map<dynamic, dynamic>);
+  Future<UserData> _getUserData(
+      FirebaseAuth auth, DatabaseReference usersRef) async {
+    User? currentUser = auth.currentUser;
+    if (currentUser == null || currentUser.email == null) {
+      throw Exception("User not logged in or email not available");
     }
-  }
-  throw Exception("User data not found");
-}
 
-Widget _buildUserProfile(BuildContext context, UserData user) {
+    Query query = usersRef.orderByChild('email').equalTo(currentUser.email);
+    DatabaseEvent event = await query.once();
+    DataSnapshot snapshot = event.snapshot;
+
+    if (snapshot.exists && snapshot.value is Map) {
+      Map<dynamic, dynamic> usersMap = snapshot.value as Map<dynamic, dynamic>;
+      if (usersMap.isNotEmpty) {
+        Map<dynamic, dynamic> userData = usersMap.values.first;
+        return UserData.fromMap(userData as Map<dynamic, dynamic>);
+      }
+    }
+    throw Exception("User data not found");
+  }
+
+  Widget _buildUserProfile(BuildContext context, UserData user) {
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -129,9 +141,11 @@ Widget _buildUserProfile(BuildContext context, UserData user) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (user.showBike) Icon(Icons.directions_bike, color: Colors.white, size: 24),
+        if (user.showBike)
+          Icon(Icons.directions_bike, color: Colors.white, size: 24),
         if (user.showRun) Icon(Icons.run_circle, color: Colors.white, size: 24),
-        if (user.showWalk) Icon(Icons.directions_walk, color: Colors.white, size: 24),
+        if (user.showWalk)
+          Icon(Icons.directions_walk, color: Colors.white, size: 24),
       ],
     );
   }
@@ -176,7 +190,7 @@ Widget _buildUserProfile(BuildContext context, UserData user) {
     );
   }
 
-  Widget _buildBottomBar() {
+  Widget _buildBottomBar(BuildContext context) {
     return BottomNavigationBar(
       items: [
         BottomNavigationBarItem(
@@ -206,11 +220,30 @@ Widget _buildUserProfile(BuildContext context, UserData user) {
       unselectedFontSize: 12,
       type: BottomNavigationBarType.fixed,
       backgroundColor: Colors.black,
-      currentIndex: 3,
-      onTap: (index) {
-        // Handle navigation items if needed
-      },
+      currentIndex: _selectedIndex,
+      onTap: (index) => _onItemTapped(index, context), // Pass context here
     );
+  }
+
+  void _onItemTapped(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MessagesPage()));
+        break;
+      case 1:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+        break;
+      case 2:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MapPage()));
+        break;
+      case 3:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => ProfilePage()));
+        break;
+    }
   }
 }
 
@@ -237,7 +270,8 @@ class UserData {
     return UserData(
       name: data['fullname'] ?? 'No Name',
       email: data['email'] ?? 'No Email',
-      profileImageUrl: data['profileImageUrl'] ?? 'https://via.placeholder.com/150',
+      profileImageUrl:
+          data['profileImageUrl'] ?? 'https://via.placeholder.com/150',
       showBike: data['bicycle']['enabled'] ?? false,
       showRun: data['running']['enabled'] ?? false,
       showWalk: data['walking']['enabled'] ?? false,

@@ -29,7 +29,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             _buildTextField("Password", passwordController, isPassword: true),
             _buildTextField("Date of Birth", dobController),
             _buildTextField("Location", locationController),
-            _buildTextField("About Me", aboutMeController, maxLines: 3),
+            _buildTextField("About Me", aboutMeController, maxLines: 5),
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {

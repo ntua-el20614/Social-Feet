@@ -39,6 +39,7 @@ dependencies:
   firebase_auth: ^4.16.0
   firebase_messaging: ^14.7.10
   firebase_database: ^10.4.0
+  latlong2: ^0.8.2
 
 dev_dependencies:
   flutter_test:
