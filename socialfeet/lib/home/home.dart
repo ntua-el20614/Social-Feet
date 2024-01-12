@@ -159,8 +159,7 @@ class _HomePageState extends State<HomePage> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: TextField(
-        controller: searchController,
+      title: TextField( 
         decoration: InputDecoration(
           hintText: 'Choose your Buddy!',
           border: InputBorder.none,

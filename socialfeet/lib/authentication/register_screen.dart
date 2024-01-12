@@ -18,12 +18,12 @@ class RegisterScreen extends StatelessWidget {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 
   Future<bool> registerUser(context, String email, String password,
-      String fullname, String username) async {
+      String fullname, String username, String location) async {
     try {
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      _saveUserDataToDatabase(email, username, fullname);
+      _saveUserDataToDatabase(email, username, fullname,location);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Successful Registration")),
@@ -74,7 +74,7 @@ class RegisterScreen extends StatelessWidget {
               _inputField(
                   screenWidth, 'Confirm Password', confirmPasswordController,
                   isPassword: true),
-              _inputField(screenWidth, 'Date of Birth', dobController),
+              _inputField(screenWidth, 'Location (City)', dobController),
               SizedBox(height: 30),
               Text(
                 'By registering, you are agreeing to our\nTerms of Use and Privacy Policy.',
@@ -145,11 +145,12 @@ class RegisterScreen extends StatelessWidget {
         final String password = passwordController.text.trim();
         final String username = usernameController.text.trim();
         final String fullname = fullnameController.text.trim();
+        final String location = dobController.text.trim();
 
         bool isRegistered =
-            await registerUser(context, email, password, fullname, username);
+            await registerUser(context, email, password, fullname, username,location);
         if (isRegistered) {
-          _saveUserDataToDatabase(email, username, fullname);
+          _saveUserDataToDatabase(email, username, fullname,location);
           if (isRegistered) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("User registered successfully!")),
@@ -190,7 +191,7 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  void _saveUserDataToDatabase(String email, String username, String fullname) {
+  void _saveUserDataToDatabase(String email, String username, String fullname, String location) {
     // Encode the email to be a valid Firebase key
     try {
       String encodedEmail = email.split('@').first.replaceAll('.', ',');
@@ -201,6 +202,7 @@ class RegisterScreen extends StatelessWidget {
         'aboutMe': '',
         'username': username,
         'fullname': fullname,
+        'location':location,
         'running': {
           'distance': 0,
           'enabled': false,
