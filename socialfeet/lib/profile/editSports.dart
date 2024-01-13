@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class editSportsScreen extends StatefulWidget {
+class EditSportsScreen extends StatefulWidget {
   @override
   _EditSportsScreenState createState() => _EditSportsScreenState();
 }

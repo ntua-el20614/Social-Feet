@@ -159,7 +159,7 @@ class RegisterScreen extends StatelessWidget {
 
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => editSportsScreen()),
+              MaterialPageRoute(builder: (context) => EditSportsScreen()),
             );
           }
         } else {
