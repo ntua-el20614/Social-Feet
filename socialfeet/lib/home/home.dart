@@ -28,7 +28,7 @@ Future<List<UserProfile>> fetchUserProfilesFromDatabase() async {
       );
       userProfiles.add(user);
     });
-  }else{
+  } else {
     print("No users found!");
   }
   return userProfiles;
@@ -36,16 +36,16 @@ Future<List<UserProfile>> fetchUserProfilesFromDatabase() async {
 
 class UserProfile {
   final String name;
-  final String username; 
-
+  final String username;
+  final String photo;
   final bool showBike;
   final bool showRun;
   final bool showWalk;
 
   UserProfile(
       {required this.name,
-          required this.username, 
-
+      required this.username,
+      this.photo = "",
       this.showBike = false,
       this.showRun = false,
       this.showWalk = false});
@@ -70,19 +70,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController searchController = TextEditingController();
   int _selectedIndex = 1; // Assuming 'Home' is the default selected item.
-/*
-  final List<UserProfile> userProfiles = [
-    UserProfile(name: 'Kennedy', showBike: false, showRun: false, showWalk: false), // we see no "kennedy"
-    UserProfile(name: 'Joey Mills', showBike: false, showRun: false, showWalk: true),
-    UserProfile(name: 'Elizabeth Bathory', showBike: false, showRun: true, showWalk: false),
-    UserProfile(name: 'Alan Wake', showBike: false, showRun: true, showWalk: true),
-    UserProfile(name: 'Rachel Forest', showBike: true, showRun: false, showWalk: false),
-    UserProfile(name: 'Rachel Tree', showBike: true, showRun: false, showWalk: true),
-    UserProfile(name: 'Anderson', showBike: true, showRun: true, showWalk: false),
-    UserProfile(name: 'John Cena', showBike: true, showRun: true, showWalk: true),
-    UserProfile(name: 'John Locke', showBike: false, showRun: true, showWalk: false),
-    UserProfile(name: 'John Kennedy', showBike: false, showRun: false, showWalk: true),
-  ]*/
 
   List<UserProfile> userProfiles = [];
 
@@ -98,6 +85,7 @@ class _HomePageState extends State<HomePage> {
       print(
           "Profile: ${profile.name}, Bike: ${profile.showBike}, Run: ${profile.showRun}, Walk: ${profile.showWalk}");
     }
+
     setState(() {
       userProfiles = profiles; // Update the state with fetched profiles
     });
@@ -159,7 +147,7 @@ class _HomePageState extends State<HomePage> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: TextField( 
+      title: TextField(
         decoration: InputDecoration(
           hintText: 'Choose your Buddy!',
           border: InputBorder.none,
@@ -238,7 +226,7 @@ class _HomePageState extends State<HomePage> {
                   return _buildCharacterCard(
                     context,
                     profile: filteredProfiles[index],
-                    imageUrl: 'https://via.placeholder.com/155x95',
+                    imageUrl: './lib/photos/nophoto.png',
                   );
                 },
               ),
@@ -260,6 +248,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildImage(String imageUrl) {
+    if (imageUrl.startsWith('http') || imageUrl.startsWith('https')) {
+      return Image.network(imageUrl, fit: BoxFit.cover);
+    } else {
+      return Image.asset(imageUrl, fit: BoxFit.cover);
+    }
+  }
+
   Widget _buildCharacterCard(BuildContext context,
       {required UserProfile profile, required String imageUrl}) {
     return InkWell(
@@ -268,8 +264,7 @@ class _HomePageState extends State<HomePage> {
           context,
           MaterialPageRoute(
             builder: (context) => BuddyProfile(
-              username:
-                  profile.username, // Pass the encoded email identifier
+              username: profile.username, // Pass the encoded email identifier
             ),
           ),
         );
@@ -282,10 +277,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Image.network(imageUrl, fit: BoxFit.cover),
-              ),
+              child: _buildImage(imageUrl),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),

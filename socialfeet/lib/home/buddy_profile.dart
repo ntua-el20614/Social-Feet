@@ -85,12 +85,13 @@ class _BuddyProfileState extends State<BuddyProfile> {
                       ),
                     ),
                   ),
+                  
                   CircleAvatar(
                     radius: 60,
                     backgroundColor: Colors.white,
                     child: CircleAvatar(
                       radius: 55,
-                      backgroundImage: NetworkImage(""), // Placeholder image
+                      backgroundImage: AssetImage("./lib/photos/nophoto.png"), // Placeholder image
                       backgroundColor: Colors.grey,
                     )),
                   SizedBox(height: 20),

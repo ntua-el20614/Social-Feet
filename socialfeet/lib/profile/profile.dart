@@ -35,10 +35,8 @@ class ProfilePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
-              
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
-
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EditProfileScreen()));
             },
           ),
         ],
@@ -105,9 +103,9 @@ class ProfilePage extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 50,
-                backgroundImage: NetworkImage(user.profileImageUrl),
+                backgroundImage: AssetImage("./lib/photos/nophotos.png"),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 50),
               Text(
                 '${user.name}',
                 style: TextStyle(
@@ -135,19 +133,17 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
-Widget _buildActivityIcons(UserData user) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      if (user.showBike)
-        Text('🚴', style: TextStyle(fontSize: 24)),
-      if (user.showRun) 
-        Text('🏃', style: TextStyle(fontSize: 24)),
-      if (user.showWalk)
-        Text('🚶', style: TextStyle(fontSize: 24)),
-    ],
-  );
-}
+
+  Widget _buildActivityIcons(UserData user) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (user.showBike) Text('🚴', style: TextStyle(fontSize: 24)),
+        if (user.showRun) Text('🏃', style: TextStyle(fontSize: 24)),
+        if (user.showWalk) Text('🚶', style: TextStyle(fontSize: 24)),
+      ],
+    );
+  }
 
   Widget _buildAboutMeSection(String aboutMe) {
     return Container(
@@ -273,8 +269,7 @@ class UserData {
       email: data['email'] ?? 'No Email',
       profileImageUrl:
           data['profileImageUrl'] ?? 'https://via.placeholder.com/150',
-      location:
-          data['location'] ?? '',
+      location: data['location'] ?? '',
       showBike: data['bicycle']['enabled'] ?? false,
       showRun: data['running']['enabled'] ?? false,
       showWalk: data['walking']['enabled'] ?? false,

@@ -99,7 +99,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: [
             _buildProfilePicture(),
             _buildTextField("Name Surname", nameController),
-            _buildTextField("Email", emailController),
+            //_buildTextField("Email", emailController),
             _buildTextField("Location", locationController),
             _buildTextField("About Me", aboutMeController, maxLines: 5),
             SizedBox(height: 16),
@@ -122,7 +122,7 @@ Widget _buildProfilePicture() {
         },
         child: CircleAvatar(
           radius: 50,
-          backgroundImage: NetworkImage('https://via.placeholder.com/155x95'),
+          backgroundImage: AssetImage('./lib/photos/nophoto.png'),
         ),
       ),
       SizedBox(width: 20), // Spacer
