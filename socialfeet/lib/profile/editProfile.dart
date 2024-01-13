@@ -82,9 +82,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         title: Text('Edit Profile'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Container(
@@ -94,10 +92,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             end: Alignment(0.21, 0.98),
             colors: [Color(0x4C36DDA6), Color(0x4C8846DF)],
           ),
-        ), 
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            children: [
             _buildProfilePicture(),
             _buildTextField("Name Surname", nameController),
             _buildTextField("Email", emailController),
@@ -111,7 +110,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ],
         ),
       ),
-    );
+    ));
   }
 Widget _buildProfilePicture() {
   return Row(
@@ -123,7 +122,7 @@ Widget _buildProfilePicture() {
         },
         child: CircleAvatar(
           radius: 50,
-          backgroundImage: NetworkImage('URL_TO_USER_PROFILE_IMAGE'),
+          backgroundImage: NetworkImage('https://via.placeholder.com/155x95'),
         ),
       ),
       SizedBox(width: 20), // Spacer

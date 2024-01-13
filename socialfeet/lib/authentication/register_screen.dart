@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:socialfeet/home/home.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:socialfeet/profile/editSports.dart';
 
 class RegisterScreen extends StatelessWidget {
   final TextEditingController usernameController = TextEditingController();
@@ -158,7 +159,7 @@ class RegisterScreen extends StatelessWidget {
 
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => editSportsScreen()),
             );
           }
         } else {
