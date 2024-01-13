@@ -69,7 +69,7 @@ class RegisterScreen extends StatelessWidget {
               SizedBox(height: 20),
               _inputField(screenWidth, 'Username', usernameController),
               _inputField(screenWidth, 'Fullname', fullnameController),
-              _inputField(screenWidth, 'Email / Phone', emailController),
+              _inputField(screenWidth, 'Email', emailController),
               _inputField(screenWidth, 'Password', passwordController,
                   isPassword: true),
               _inputField(
