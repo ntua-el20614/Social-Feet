@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 
 class DatabaseService {
-  final DatabaseReference _dbRef = FirebaseDatabase.instance.reference();
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
 
   // Function to read data from Firebase Realtime Database
   Future<DataSnapshot> readData(String path) async {
@@ -19,7 +19,5 @@ class DatabaseService {
     await _dbRef.child(path).update(data);
   }
 
-
   // Add more functions as needed for your specific use cases
 }
-
