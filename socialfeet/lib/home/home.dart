@@ -22,6 +22,7 @@ Future<List<UserProfile>> fetchUserProfilesFromDatabase() async {
         name: value['fullname'] ??
             'Unknown', // Replace 'Unknown' with a default name if username is not present
         username: value['username'],
+        location: value['location'],
         showBike: value['bicycle']['enabled'] ?? false,
         showRun: value['running']['enabled'] ?? false,
         showWalk: value['walking']['enabled'] ?? false,
@@ -38,6 +39,7 @@ class UserProfile {
   final String name;
   final String username;
   final String photo;
+  final String location;
   final bool showBike;
   final bool showRun;
   final bool showWalk;
@@ -45,6 +47,7 @@ class UserProfile {
   UserProfile(
       {required this.name,
       required this.username,
+      required this.location,
       this.photo = "",
       this.showBike = false,
       this.showRun = false,
@@ -55,9 +58,11 @@ class HomePage extends StatefulWidget {
   bool filterBike;
   bool filterRun;
   bool filterWalk;
+  String filterLocation;
 
   HomePage({
     Key? key,
+    this.filterLocation = "",
     this.filterBike = true,
     this.filterRun = true,
     this.filterWalk = true,
@@ -83,7 +88,7 @@ class _HomePageState extends State<HomePage> {
     List<UserProfile> profiles = await fetchUserProfilesFromDatabase();
     for (var profile in profiles) {
       print(
-          "Profile: ${profile.name}, Bike: ${profile.showBike}, Run: ${profile.showRun}, Walk: ${profile.showWalk}");
+          "Profile: ${profile.name}, Location: ${profile.location} , Bike: ${profile.showBike}, Run: ${profile.showRun}, Walk: ${profile.showWalk}");
     }
 
     setState(() {
@@ -119,13 +124,23 @@ class _HomePageState extends State<HomePage> {
   List<UserProfile> getFilteredProfiles() {
     return userProfiles.where((profile) {
       bool matchesFilter = false;
-      if (widget.filterBike && profile.showBike) {
+
+      if (widget.filterBike &&
+          profile.showBike &&
+          (widget.filterLocation == profile.location ||
+              widget.filterLocation == "")) {
         matchesFilter = true;
       }
-      if (widget.filterRun && profile.showRun) {
+      if (widget.filterRun &&
+          profile.showRun &&
+          (widget.filterLocation == profile.location ||
+              widget.filterLocation == "")) {
         matchesFilter = true;
       }
-      if (widget.filterWalk && profile.showWalk) {
+      if (widget.filterWalk &&
+          profile.showWalk &&
+          (widget.filterLocation == profile.location ||
+              widget.filterLocation == "")) {
         matchesFilter = true;
       }
       return matchesFilter;
@@ -163,6 +178,7 @@ class _HomePageState extends State<HomePage> {
                 filterBike: widget.filterBike,
                 filterRun: widget.filterRun,
                 filterWalk: widget.filterWalk,
+                filterLocation: widget.filterLocation,
               ),
             ),
           );
@@ -172,6 +188,7 @@ class _HomePageState extends State<HomePage> {
               widget.filterBike = result['filterBike'];
               widget.filterRun = result['filterRun'];
               widget.filterWalk = result['filterWalk'];
+              widget.filterLocation = result['filterLocation'];
             });
           }
         },
@@ -186,6 +203,30 @@ class _HomePageState extends State<HomePage> {
               CircularProgressIndicator()); // Show loading indicator while data is loading
     }
     List<UserProfile> filteredProfiles = getFilteredProfiles();
+
+    if (filteredProfiles.isEmpty) {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black, width: 3),
+          gradient: LinearGradient(
+            begin: Alignment(1, 0),
+            end: Alignment(0, 1),
+            colors: [
+              Colors.teal.withOpacity(0.75),
+              Colors.deepPurple.withOpacity(0.75)
+            ],
+          ),
+        ),
+        child: Center(
+          child: Text(
+            "No users in this location based on your filters",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
 
     return Container(
       width: MediaQuery.of(context).size.width,
