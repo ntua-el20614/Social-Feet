@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:socialfeet/messages/messages.dart';
 import '/authentication/login_screen.dart';
 import '/authentication/register_screen.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(); // Initialize Firebase
   runApp(const MyApp());
@@ -34,9 +35,9 @@ class Start extends StatelessWidget {
   Widget build(BuildContext context) {
     // Obtain the screen size
     var screenSize = MediaQuery.of(context).size;
-    
-    double containerWidth = screenSize.width; 
-    double containerHeight = screenSize.height; 
+
+    double containerWidth = screenSize.width;
+    double containerHeight = screenSize.height;
 
     return Scaffold(
       body: Center(
@@ -137,4 +138,3 @@ class Start extends StatelessWidget {
     );
   }
 }
-
