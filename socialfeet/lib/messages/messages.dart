@@ -1,8 +1,6 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:socialfeet/messages/chat_screen.dart';
 
 class MessagesPage extends StatefulWidget {
@@ -14,33 +12,7 @@ class MessagesPage extends StatefulWidget {
 
 class _MessagesPageState extends State<MessagesPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
-  List<MessagesPageItem> MessagesPage = [];
-
-  @override
-  void initState() {
-    super.initState();
-    loadChats();
-  }
-
-  void loadChats() {
-    // Assuming you have a user ID to fetch chats for that specific user
-    String userId = _auth.currentUser!.uid;
-    DatabaseReference chatsRef = _database.ref().child('chats/$userId');
-
-    chatsRef.onValue.listen((event) {
-      var chats = event.snapshot.value as Map<dynamic, dynamic>?;
-      if (chats != null) {
-        var loadedChats = chats.entries
-            .map((e) => MessagesPageItem.fromMap(e.key, Map.from(e.value)))
-            .toList();
-
-        setState(() {
-          MessagesPage = loadedChats;
-        });
-      }
-    });
-  }
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -48,81 +20,64 @@ class _MessagesPageState extends State<MessagesPage> {
       appBar: AppBar(
         title: const Text('Messages'),
       ),
-      body: ListView.builder(
-        itemCount: MessagesPage.length,
-        itemBuilder: (context, index) {
-          return MessagesPageTile(chat: MessagesPage[index]);
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestore
+            .collection('chats')
+            .where('participants', arrayContains: _auth.currentUser!.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              var chatData =
+                  snapshot.data!.docs[index].data() as Map<String, dynamic>;
+              String chatId = snapshot.data!.docs[index].id;
+              return ChatListTile(
+                chatId: chatId,
+                lastMessage: chatData['lastMessage'] ?? 'No messages yet',
+                participants: chatData['participants'],
+              );
+            },
+          );
         },
       ),
     );
   }
 }
 
-class MessagesPageItem {
+class ChatListTile extends StatelessWidget {
   final String chatId;
   final String lastMessage;
-  final String timestamp;
-  final String
-      name; // You would fetch the name from the user's profile using the userId
-  final String
-      profileImageUrl; // Same as above, this would come from user's profile
+  final List<String> participants;
 
-  MessagesPageItem({
+  const ChatListTile({
+    Key? key,
     required this.chatId,
     required this.lastMessage,
-    required this.timestamp,
-    required this.name,
-    required this.profileImageUrl,
-  });
-
-  factory MessagesPageItem.fromMap(String chatId, Map<String, dynamic> data) {
-    return MessagesPageItem(
-      chatId: chatId,
-      lastMessage: data['lastMessage'] ?? '',
-      timestamp: data['timestamp'] ?? '',
-      name: data['name'] ?? '',
-      profileImageUrl: data['profileImageUrl'] ?? '',
-    );
-  }
-}
-
-class MessagesPageTile extends StatelessWidget {
-  final MessagesPageItem chat;
-
-  const MessagesPageTile({Key? key, required this.chat}) : super(key: key);
+    required this.participants,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+// Assuming the first participant is the other user (not the current user)
+    String otherUserId = participants.firstWhere(
+        (id) => id != FirebaseAuth.instance.currentUser!.uid,
+        orElse: () => '');
     return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(chat.profileImageUrl),
-      ),
-      title: Text(chat.name),
-      subtitle: Text(chat.lastMessage),
-      trailing: Text(chat.timestamp),
+      title: Text(
+          otherUserId), // You can replace this with fetching the user's name using otherUserId
+      subtitle: Text(lastMessage),
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ChatScreen(chatId: chat.chatId),
+            builder: (context) => ChatScreen(chatId: chatId),
           ),
         );
       },
     );
   }
-/*
-  Widget _buildNewMessageIndicator(int newMessagesCount) {
-    return Container(
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.red,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        '$newMessagesCount',
-        style: TextStyle(color: Colors.white),
-      ),
-    );
-  }
-  */
 }

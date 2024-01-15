@@ -14,7 +14,7 @@ void main() async {
       projectId: "socialfeet-c8776", // Replace with your project_id
       databaseURL: 'https://socialfeet-c8776-default-rtdb.europe-west1.firebasedatabase.app',
     ),
-  );
+  ); 
   runApp(MyApp());
 }
 
