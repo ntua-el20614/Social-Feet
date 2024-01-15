@@ -4,9 +4,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'screens/destination_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/points_of_interest_screen.dart';
+import '../screens/destination_screen.dart';
+import '../screens/home_screen.dart';
+import '../screens/points_of_interest_screen.dart';
 
 class MapPage extends StatefulWidget {
   @override
