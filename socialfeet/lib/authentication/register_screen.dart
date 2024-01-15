@@ -159,7 +159,7 @@ class RegisterScreen extends StatelessWidget {
 
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => EditSportsScreen()),
+              MaterialPageRoute(builder: (context) => EditSportsScreen(cameFromRegisterPage : true)),
             );
           }
         } else {
@@ -195,7 +195,7 @@ class RegisterScreen extends StatelessWidget {
   void _saveUserDataToDatabase(String email, String username, String fullname, String location) {
     // Encode the email to be a valid Firebase key
     try {
-      String encodedEmail = email.split('@').first.replaceAll('.', ',');
+      String encodedEmail = username;
       DatabaseReference userRef = _database.ref("users/$encodedEmail");
 
       userRef.set({

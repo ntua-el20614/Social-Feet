@@ -10,12 +10,14 @@ class HomeFilter extends StatefulWidget {
   bool filterBike;
   bool filterRun;
   bool filterWalk;
+  String filterLocation;
 
   HomeFilter({
     Key? key,
     required this.filterBike,
     required this.filterRun,
     required this.filterWalk,
+    required this.filterLocation,
   }) : super(key: key);
 
   @override
@@ -49,64 +51,117 @@ class _HomeFilterState extends State<HomeFilter> {
         break;
     }
   }
+  final TextEditingController _cityController = TextEditingController(); // Controller for city input
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  void initState() {
+    super.initState();
+    _cityController.text = widget.filterLocation; // Initialize controller with existing filterLocation
+  }
+  
+  @override
+  void dispose() {
+    _cityController.dispose(); // Dispose the controller when the widget is disposed
+    super.dispose();
+  }
+
+  @override
+Widget build(BuildContext context) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment(0, -1),
+        end: Alignment(0, 1),
+        colors: [Color(0xFF36DDA6), Color(0xFF8846DF)],  
+      ),
+    ),
+    child: Scaffold(
       appBar: AppBar(
         title: Text('Choose your filters!'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment(-0.21, -0.98),
-            end: Alignment(0.21, 0.98),
-            colors: [Color(0x4C36DDA6), Color(0x4C8846DF)],
-          ),
-        ),
+      backgroundColor: Colors.transparent, // Make Scaffold background transparent
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                child: Text('Apply Filters'),
-                onPressed: () {
-                  Navigator.pop(context, {
-                    'filterBike': widget.filterBike,
-                    'filterRun': widget.filterRun,
-                    'filterWalk': widget.filterWalk,
-                  });
-                },
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _filterButton('🚴 Bike', widget.filterBike, () {
-                      setState(() => widget.filterBike = !widget.filterBike);
-                    }),
-                    _filterButton('🏃 Run', widget.filterRun, () {
-                      setState(() => widget.filterRun = !widget.filterRun);
-                    }),
-                    _filterButton('🚶 Walk', widget.filterWalk, () {
-                      setState(() => widget.filterWalk = !widget.filterWalk);
-                    }),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    child: Text('Apply Filters'),
+                    onPressed: () {
+                      Navigator.pop(context, {
+                        'filterBike': widget.filterBike,
+                        'filterRun': widget.filterRun,
+                        'filterWalk': widget.filterWalk,
+                        'filterLocation': _cityController.text,
+                      });
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: _cityController,
+                    decoration: InputDecoration(
+                      labelText: 'Enter City',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  _filterButton('🚴 Bike', widget.filterBike, () {
+                    setState(() => widget.filterBike = !widget.filterBike);
+                  }),
+                  _filterButton('🏃 Run', widget.filterRun, () {
+                    setState(() => widget.filterRun = !widget.filterRun);
+                  }),
+                  _filterButton('🚶 Walk', widget.filterWalk, () {
+                    setState(() => widget.filterWalk = !widget.filterWalk);
+                  }),
+                ],
               ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomBar(),
-    );
-  }
-  Widget _filterButton(String title, bool isActive, VoidCallback toggleFilter) {
+    
+    bottomNavigationBar: BottomNavigationBar(
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.message),
+          label: '',
+          backgroundColor: Colors.black,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+          backgroundColor: Colors.black,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.map),
+          label: '',
+          backgroundColor: Colors.black,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: '',
+          backgroundColor: Colors.black,
+        ),
+      ],
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white.withOpacity(0.6),
+      selectedFontSize: 12,
+      unselectedFontSize: 12,
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.black,
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+    ),
+  ));
+}
+
+Widget _filterButton(String title, bool isActive, VoidCallback toggleFilter) {
   return Container(
     margin: EdgeInsets.symmetric(vertical: 25),
     child: ElevatedButton(
@@ -116,7 +171,7 @@ class _HomeFilterState extends State<HomeFilter> {
         padding: EdgeInsets.symmetric(horizontal: 75, vertical: 25),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: Colors.black, width: 2), // Added black border
+          side: BorderSide(color: Colors.black, width: 2),
         ),
       ),
       child: Text(
@@ -130,34 +185,7 @@ class _HomeFilterState extends State<HomeFilter> {
   );
 }
 
+  
+  
 
-
-  Widget _buildBottomBar() {
-    return BottomNavigationBar(
-      items: [
-        BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: ' ',
-            backgroundColor: Colors.black),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            backgroundColor: Colors.black),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.map), label: ' ', backgroundColor: Colors.black),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: ' ',
-            backgroundColor: Colors.black),
-      ],
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white.withOpacity(0.6),
-      selectedFontSize: 12,
-      unselectedFontSize: 12,
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.black,
-      currentIndex: _selectedIndex,
-      onTap: _onItemTapped,
-    );
-  }
 }

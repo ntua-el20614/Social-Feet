@@ -22,6 +22,7 @@ class _BuddyProfileState extends State<BuddyProfile> {
   double walkSpeed = 0.0;
   double walkDistance = 0.0;
   String aboutMe = "";
+  String location= "";
   bool isLoading = true;
 
   @override
@@ -48,6 +49,7 @@ class _BuddyProfileState extends State<BuddyProfile> {
         walkSpeed = userData['walking']['speed']?.toDouble() ?? 0.0;
         walkDistance = userData['walking']['distance']?.toDouble() ?? 0.0;
         aboutMe = userData['aboutMe'] ?? '';
+        location = userData['location'] ?? '';
         isLoading = false;
       });
     }
@@ -116,6 +118,12 @@ class _BuddyProfileState extends State<BuddyProfile> {
                       style: TextStyle(fontSize: 24),
                     ),
                   ),
+                  Text(
+                    location,
+                    style: TextStyle(fontSize: 18, color: Colors.black.withOpacity(0.6)),
+                  ),
+
+
                   SizedBox(height: 20),
                   if (showBike) _buildActivityBox('Biking🚴', bikeSpeed, bikeDistance),
                   SizedBox(height: 20),
