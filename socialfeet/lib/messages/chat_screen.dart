@@ -1,14 +1,14 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:intl/intl.dart'; // For date formatting
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart'; // For picking images
+// Import any other packages you need for audio recording
 
 class ChatScreen extends StatefulWidget {
   final String chatId;
 
-  const ChatScreen({super.key, required this.chatId});
+  const ChatScreen({Key? key, required this.chatId}) : super(key: key);
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -16,37 +16,59 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   final TextEditingController _messageController = TextEditingController();
 
-  late DatabaseReference _messagesRef;
-  final List<Message> _messages = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _messagesRef = _database.ref().child('chats/${widget.chatId}/messages');
-    _messagesRef.onChildAdded.listen(_onMessageAdded);
-  }
-
-  void _onMessageAdded(DatabaseEvent event) {
-    setState(() {
-      _messages.add(Message.fromSnapshot(event.snapshot));
-    });
-  }
-
-  void _sendMessage() {
+  // Function to send text messages
+  void _sendTextMessage() async {
     String text = _messageController.text.trim();
     if (text.isNotEmpty) {
       var message = {
         'text': text,
         'senderId': _auth.currentUser!.uid,
-        'timestamp': ServerValue.timestamp,
+        'timestamp': FieldValue.serverTimestamp(),
+        'type': 'text',
       };
-      _messagesRef.push().set(message);
+      await _firestore
+          .collection('chats/${widget.chatId}/messages')
+          .add(message);
       _messageController.clear();
     }
   }
+
+  // Function to send image messages
+  void _sendImageMessage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      var file = await pickedFile.readAsBytes();
+      String fileName =
+          'photos/${widget.chatId}/${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
+
+      try {
+        // Upload to Firebase Storage
+        var task = await _storage.ref(fileName).putData(file);
+        String fileUrl = await task.ref.getDownloadURL();
+
+        // Save message in Firestore
+        var message = {
+          'senderId': _auth.currentUser!.uid,
+          'timestamp': FieldValue.serverTimestamp(),
+          'type': 'image',
+          'url': fileUrl,
+        };
+        await _firestore
+            .collection('chats/${widget.chatId}/messages')
+            .add(message);
+      } catch (e) {
+        // Handle errors
+      }
+    }
+  }
+
+  // Add a function for sending voice messages similar to _sendImageMessage
 
   @override
   Widget build(BuildContext context) {
@@ -55,36 +77,26 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              reverse: true,
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-// Messages are displayed in reverse order, so that the latest message is at the bottom.
-                final message = _messages[_messages.length - 1 - index];
-                bool isMe = message.senderId == _auth.currentUser!.uid;
-                return ListTile(
-                  title: Align(
-                    alignment:
-                        isMe ? Alignment.centerRight : Alignment.centerLeft,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isMe ? Colors.blue : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(message.text,
-                          style: TextStyle(
-                              color: isMe ? Colors.white : Colors.black)),
-                    ),
-                  ),
-                  subtitle: Align(
-                    alignment:
-                        isMe ? Alignment.centerRight : Alignment.centerLeft,
-                    child: Text(DateFormat('hh:mm a').format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                            message.timestamp))),
-                  ),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _firestore
+                  .collection('chats/${widget.chatId}/messages')
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                return ListView(
+                  reverse: true,
+                  children: snapshot.data!.docs.map((doc) {
+                    var message = doc.data() as Map<String, dynamic>;
+                    return MessageTile(
+                      text: message['text'],
+                      senderId: message['senderId'],
+                      type: message['type'],
+                      url: message['url'],
+                    );
+                  }).toList(),
                 );
               },
             ),
@@ -101,16 +113,23 @@ class _ChatScreenState extends State<ChatScreen> {
       color: Colors.white,
       child: Row(
         children: [
+          IconButton(
+            icon: Icon(Icons.camera_alt),
+            onPressed:
+                _sendImageMessage, // Call the function to send image messages
+          ),
+          // Add an icon button for sending voice messages
           Expanded(
             child: TextField(
               controller: _messageController,
-              decoration: const InputDecoration.collapsed(
-                  hintText: "Type a message..."),
+              decoration:
+                  InputDecoration.collapsed(hintText: "Type a message..."),
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: _sendMessage,
+            icon: Icon(Icons.send),
+            onPressed:
+                _sendTextMessage, // Call the function to send text messages
           ),
         ],
       ),
@@ -118,20 +137,34 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-class Message {
+class MessageTile extends StatelessWidget {
   final String text;
   final String senderId;
-  final int timestamp;
+  final String type;
+  final String? url;
 
-  Message(
-      {required this.text, required this.senderId, required this.timestamp});
+  const MessageTile({
+    Key? key,
+    required this.text,
+    required this.senderId,
+    required this.type,
+    this.url,
+  }) : super(key: key);
 
-  factory Message.fromSnapshot(DataSnapshot snapshot) {
-    var value = snapshot.value as Map<dynamic, dynamic>?;
-    return Message(
-      text: value?['text'] ?? '',
-      senderId: value?['senderId'] ?? '',
-      timestamp: value?['timestamp'] ?? 0,
-    );
+  @override
+  Widget build(BuildContext context) {
+    if (type == 'text') {
+      return ListTile(
+        title: Text(text),
+        subtitle: Text(senderId),
+      );
+    } else if (type == 'image') {
+      return ListTile(
+        title: Image.network(url ?? ''),
+        subtitle: Text(senderId),
+      );
+    }
+    // Add a case for 'voice' type
+    return SizedBox.shrink();
   }
 }

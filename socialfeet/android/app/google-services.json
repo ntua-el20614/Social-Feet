@@ -1,22 +1,40 @@
 {
   "project_info": {
-    "project_number": "929512699295",
-    "firebase_url": "https://social-10695-default-rtdb.firebaseio.com",
-    "project_id": "social-10695",
-    "storage_bucket": "social-10695.appspot.com"
+    "project_number": "296073509007",
+    "project_id": "socialfeet-c8776",
+    "storage_bucket": "socialfeet-c8776.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:929512699295:android:540d5b4e821bb4a629b9aa",
+        "mobilesdk_app_id": "1:296073509007:android:6c3a6cc4b4282b908b98fa",
         "android_client_info": {
-          "package_name": "com.android.application"
+          "package_name": "com.example.socialfeet"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB137Xhp885zsVtv1veprfwbBGUQKr_Ia0"
+          "current_key": "AIzaSyDVArLwO0fheGQmM9xnrvuthynephlWjEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296073509007:android:9ea2c4e931ed739e8b98fa",
+        "android_client_info": {
+          "package_name": "ntua.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVArLwO0fheGQmM9xnrvuthynephlWjEE"
         }
       ],
       "services": {

@@ -46,7 +46,7 @@ android {
         applicationId "com.example.socialfeet"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -67,12 +67,5 @@ flutter {
 
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-
-    // Add the Firebase SDK for Google Analytics
-    implementation 'com.google.firebase:firebase-analytics'
-
-    // Add the required Firebase libraries for Realtime Database
-    implementation 'com.google.firebase:firebase-database'
+    implementation("com.google.firebase:firebase-analytics")
 }
-
-apply plugin: 'com.google.gms.google-services'
