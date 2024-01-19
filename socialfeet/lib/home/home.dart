@@ -23,6 +23,7 @@ Future<List<UserProfile>> fetchUserProfilesFromDatabase() async {
             'Unknown', // Replace 'Unknown' with a default name if username is not present
         username: value['username'],
         location: value['location'],
+        photo: value['profileImageUrl'] ?? '',
         showBike: value['bicycle']['enabled'] ?? false,
         showRun: value['running']['enabled'] ?? false,
         showWalk: value['walking']['enabled'] ?? false,
@@ -318,8 +319,10 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             Expanded(
-              child: _buildImage(imageUrl),
-            ),
+            child: profile.photo.isNotEmpty
+                ? Image.network(profile.photo, fit: BoxFit.cover)
+                : Image.asset("lib/photos/nophoto.png", fit: BoxFit.cover),
+          ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(profile.name,

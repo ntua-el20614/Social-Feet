@@ -26,6 +26,8 @@ dependencies:
   hooks_riverpod: ^2.3.6 #new
   cloud_firestore: ^4.14.0 #juannew
   firebase_storage: ^11.6.0 #juannew
+  path_provider: ^2.0.8
+  uuid: ^4.3.3
   image_picker: ^1.0.7 #juannew
 
   cupertino_icons: ^1.0.2 
