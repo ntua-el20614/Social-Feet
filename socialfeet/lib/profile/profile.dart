@@ -81,60 +81,63 @@ class ProfilePage extends StatelessWidget {
     throw Exception("User data not found");
   }
 
-  Widget _buildUserProfile(BuildContext context, UserData user) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment(1, 0),
-          end: Alignment(0, 1),
-          colors: [
-            Colors.teal.withOpacity(0.4),
-            Colors.deepPurple.withOpacity(0.4),
+Widget _buildUserProfile(BuildContext context, UserData user) {
+  return Container(
+    width: double.infinity,
+    height: double.infinity,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment(1, 0),
+        end: Alignment(0, 1),
+        colors: [
+          Colors.teal.withOpacity(0.4),
+          Colors.deepPurple.withOpacity(0.4),
+        ],
+      ),
+    ),
+    child: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: user.profileImageUrl.isNotEmpty
+                  ? NetworkImage(user.profileImageUrl) as ImageProvider<Object>
+                  : AssetImage("lib/photos/nophoto.png") as ImageProvider<Object>,
+            ),
+            SizedBox(height: 50),
+            Text(
+              '${user.name}',
+              style: TextStyle(
+                fontSize: 18,
+                height: 1.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              '${user.location}',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 16),
+            _buildActivityIcons(user),
+            SizedBox(height: 16),
+            _buildAboutMeSection(user.aboutMe),
           ],
         ),
       ),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage("./lib/photos/nophotos.png"),
-              ),
-              SizedBox(height: 50),
-              Text(
-                '${user.name}',
-                style: TextStyle(
-                  fontSize: 18,
-                  height: 1.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                '${user.location}', // Replace with dynamic data if available
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(height: 16),
-              _buildActivityIcons(user),
-              SizedBox(height: 16),
-              _buildAboutMeSection(user.aboutMe),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
 
-  Widget _buildActivityIcons(UserData user) {
+
+Widget _buildActivityIcons(UserData user) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
