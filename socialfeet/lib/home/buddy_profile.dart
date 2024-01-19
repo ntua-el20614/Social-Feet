@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:socialfeet/messages/message_model.dart';
+import 'package:socialfeet/messages/messages.dart';
 
 class BuddyProfile extends StatefulWidget {
   final String username;
@@ -13,6 +15,7 @@ class BuddyProfile extends StatefulWidget {
 class _BuddyProfileState extends State<BuddyProfile> {
   String name = "";
   String profileImageUrl = "";
+  String email = "";
   bool showBike = false;
   bool showRun = false;
   bool showWalk = false;
@@ -41,6 +44,7 @@ class _BuddyProfileState extends State<BuddyProfile> {
       var userData = event.snapshot.value as Map<dynamic, dynamic>;
       setState(() {
         name = userData['fullname'] ?? '';
+        email = userData['email'] ?? '';
         profileImageUrl =
             userData['profileImageUrl'] ?? './lib/photos/nophoto.png';
         showBike = userData['bicycle']['enabled'] ?? false;
@@ -118,10 +122,21 @@ class _BuddyProfileState extends State<BuddyProfile> {
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {}, // Implement message button action
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MessagesPage(
+                              receiverEmail: email,
+                              receiverProfileImageUrl: profileImageUrl,
+                              receiverName: name,
+                            ),
+                          ),
+                        );
+                      }, // Implement message button action
                       style: ElevatedButton.styleFrom(
                         primary: Colors.white,
-                        shape: CircleBorder(),
+                        // ... rest of the style code
                       ),
                       child: Text(
                         '💬',

@@ -12,14 +12,13 @@ import 'package:socialfeet/messages/messages.dart';
 import 'package:socialfeet/home/home.dart';
 //import 'package:socialfeet/map/map.dart';
 import 'package:socialfeet/profile/profile.dart';
-
 class MapPage extends StatefulWidget {
   @override
   _MapPageState createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {
-  int _selectedIndex = 2;
+   int _selectedIndex = 2;
   GoogleMapController? mapController; // Controller for Google map
   LatLng _center = const LatLng(37.979064, 23.783042); // Default location
   final Set<Marker> _markers = {}; // Markers for pinned locations
@@ -28,6 +27,12 @@ class _MapPageState extends State<MapPage> {
 
   TextEditingController _searchController = TextEditingController();
 
+
+  // Filter variables
+  bool filterBike = true;
+  bool filterRun = true;
+  bool filterWalk = true;
+
   @override
   void initState() {
     super.initState();
@@ -35,43 +40,53 @@ class _MapPageState extends State<MapPage> {
     _loadMarkers();
   }
 
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
 
-void _loadMarkers() async {
+  void _loadMarkers() async {
   DatabaseReference locationsRef = FirebaseDatabase.instance.ref('location');  // Adjusted path
-  DatabaseEvent event = await locationsRef.once();
-  
-  print("locationsRef: $locationsRef");
-  print("event: $event");
-
-  if (event.snapshot.exists) {
+    DatabaseEvent event = await locationsRef.once();
+    print("locationsRef: $locationsRef");
+    print("event: $event");
+      if (event.snapshot.exists) {
     Map<dynamic, dynamic> locations = event.snapshot.value as Map<dynamic, dynamic>;
     print("locations: $locations");
+      setState(() {
+        _markers.clear();
+        locations.forEach((key, value) {
+          final markerInfo = Map<String, dynamic>.from(value);
 
-    setState(() {
-      _markers.clear();
-      locations.forEach((key, value) {
-        final markerInfo = Map<String, dynamic>.from(value);
-        final LatLng position = LatLng(markerInfo['lat'], markerInfo['long']);
-        final String name = markerInfo['name'];
-        final String info = markerInfo['Info'];
-        print("Position: $position");
-        _markers.add(
-          Marker(
-            markerId: MarkerId(key),
-            position: position,
-            infoWindow: InfoWindow(title: name, snippet: info),
-            icon: BitmapDescriptor.defaultMarker,
-          ),
-        );
+          // Check if the location matches the selected filters
+          bool matchesFilter = (filterBike && markerInfo['isBike']) ||
+                               (filterRun && markerInfo['isRun']) ||
+                               (filterWalk && markerInfo['isWalk']);
+
+          if (matchesFilter) {
+            final LatLng position = LatLng(markerInfo['lat'], markerInfo['long']);
+            final String name = markerInfo['name'];
+            final String info = markerInfo['Info']; // Assuming 'Info' field exists
+            print("Position: $position");
+
+            _markers.add(
+              Marker(
+                markerId: MarkerId(key),
+                position: position,
+                infoWindow: InfoWindow(title: name, snippet: info),
+                icon: BitmapDescriptor.defaultMarker,
+              ),
+            );
+          }
+        });
       });
-    });
-  } else {
-    print("No locations found in the database.");
+    } else {
+      print("No locations found in the database.");
+    }
   }
-}
 
-  _getUserLocation() async {
+   _getUserLocation() async {
     var position = await _determinePosition();
+
     setState(() {
       _center = LatLng(position.latitude, position.longitude);
       _isLoading = false;
@@ -84,15 +99,15 @@ void _loadMarkers() async {
         hintText: 'Search here...',
         suffixIcon: Icon(Icons.search),
       ),
-      onChanged: (value) {
-        setState(() {
-          _searchQuery = value;
-        });
+        onChanged: (value) {
+            setState(() {
+              _searchQuery = value;
+              });
         if (_searchQuery.isNotEmpty) {
           _searchPlaces(_searchQuery);
-        }
-      },
-    );
+            }
+          },
+        );
   }
 
   Future<void> _searchPlaces(String query) async {
@@ -107,7 +122,7 @@ void _loadMarkers() async {
       if (predictions.isNotEmpty) {
         var placeId = predictions[0]['place_id'];
         _getPlaceDetails(placeId);
-      }
+            }
     } else {
       // Handle error
     }
@@ -156,20 +171,68 @@ void _loadMarkers() async {
           ),
         ),
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : GoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: _center,
-                zoom: 11.0,
-              ),
-              markers: _markers,
-              onTap: _handleTap,
-            ),
+      
+      body: Column(
+        children: [
+          _buildFilterBar(), // Filter bar
+          Expanded(
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : GoogleMap(
+                    onMapCreated: _onMapCreated,
+                    initialCameraPosition: CameraPosition(
+                      target: _center,
+                      zoom: 11.0,
+                    ),
+                    markers: _markers,
+                  ),
+          ),
+        ],
+      ),
       bottomNavigationBar: _buildBottomBar(),
     );
   }
+
+Widget _buildFilterBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        FilterChip(
+          label: Text('Bike'),
+          selected: filterBike,
+          onSelected: (bool value) {
+            setState(() {
+              filterBike = value;
+              _loadMarkers();
+            });
+          },
+        ),
+        FilterChip(
+          label: Text('Run'),
+          selected: filterRun,
+          onSelected: (bool value) {
+            setState(() {
+              filterRun = value;
+              _loadMarkers();
+            });
+          },
+        ),
+        FilterChip(
+          label: Text('Walk'),
+          selected: filterWalk,
+          onSelected: (bool value) {
+            setState(() {
+              filterWalk = value;
+              _loadMarkers();
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+
+
 
   Widget _buildBottomBar() {
     return BottomNavigationBar(
@@ -225,9 +288,6 @@ void _loadMarkers() async {
     }
   }
 
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
 
   void _handleTap(LatLng point) {
     setState(() {
@@ -270,5 +330,4 @@ void _loadMarkers() async {
 
     // When we reach here, permissions are granted and we can continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
-  }
-}
+  }}
