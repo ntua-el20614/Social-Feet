@@ -13,6 +13,8 @@ dependencies:
   flutter:
     sdk: flutter
   google_maps_flutter: ^2.0.6
+  shake_event: ^0.3.1
+
   geolocator: ^10.1.0
   flutter_spinkit: ^5.0.0
 
@@ -26,6 +28,8 @@ dependencies:
   hooks_riverpod: ^2.3.6 #new
   cloud_firestore: ^4.14.0 #juannew
   firebase_storage: ^11.6.0 #juannew
+  path_provider: ^2.0.8
+  uuid: ^4.3.3
   image_picker: ^1.0.7 #juannew
 
   cupertino_icons: ^1.0.2 
