@@ -94,11 +94,12 @@ class LoginScreen extends StatelessWidget {
                 width: screenWidth * 0.8,
                 margin: EdgeInsets.only(top: 20),
                 child: TextFormField(
+                  obscureText: true,
                   controller: passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     fillColor: Colors.white,
-                    filled: true,
+                    filled: true, 
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
