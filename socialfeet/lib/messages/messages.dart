@@ -7,15 +7,15 @@ import 'package:socialfeet/messages/mytextfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class MessagesPage extends StatefulWidget {
-  final String receiverEmail;
-  final String receiverName;
-  final String receiverProfileImageUrl;
+  final String? receiverEmail;
+  final String? receiverName;
+  final String? receiverProfileImageUrl;
 
   const MessagesPage({
     super.key,
-    required this.receiverEmail,
-    required this.receiverName,
-    required this.receiverProfileImageUrl,
+    this.receiverEmail,
+    this.receiverName,
+    this.receiverProfileImageUrl,
   });
 
   @override
@@ -43,9 +43,10 @@ class _MessagesPageState extends State<MessagesPage> {
         senderEmail: currentUser.email!,
         senderProfileImageUrl:
             currentUser.photoURL ?? 'https://via.placeholder.com/150',
-        receiverName: widget.receiverName,
-        receiverEmail: widget.receiverEmail,
-        receiverProfileImageUrl: widget.receiverProfileImageUrl,
+        receiverName: widget.receiverName ?? 'NULL Name',
+        receiverEmail: widget.receiverEmail ?? 'null@mail.com',
+        receiverProfileImageUrl:
+            widget.receiverProfileImageUrl ?? 'nullImageUrl',
         message: _messageController.text,
         timestamp: Timestamp.now(),
       );
@@ -72,14 +73,14 @@ class _MessagesPageState extends State<MessagesPage> {
     final currentUserEmail = _auth.currentUser!.email!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
+        title: Text(widget.receiverEmail ?? 'null@mail.com'),
       ),
       body: Column(
         children: [
           Expanded(
             child: StreamBuilder<List<Message>>(
               stream: _chatService.getMessages(
-                  currentUserEmail, widget.receiverEmail),
+                  currentUserEmail, widget.receiverEmail ?? 'null@mail.com'),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
