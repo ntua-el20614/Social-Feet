@@ -8,10 +8,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: FirebaseOptions(
-      apiKey: "AIzaSyDVArLwO0fheGQmM9xnrvuthynephlWjEE", // Replace with your apiKey
-      appId: "1:296073509007:android:6c3a6cc4b4282b908b98fa", // Replace with your mobilesdk_app_id
-      messagingSenderId: "296073509007", // Replace with your project_number
-      projectId: "socialfeet-c8776", // Replace with your project_id
+      apiKey: "AIzaSyDVArLwO0fheGQmM9xnrvuthynephlWjEE",
+      appId: "1:296073509007:android:6c3a6cc4b4282b908b98fa", 
+      messagingSenderId: "296073509007",
+      projectId: "socialfeet-c8776", 
       databaseURL: 'https://socialfeet-c8776-default-rtdb.europe-west1.firebasedatabase.app',
     ),
   ); 

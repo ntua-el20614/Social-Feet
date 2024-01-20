@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:socialfeet/messages/message_model.dart';
-import 'package:socialfeet/messages/messages.dart';
+
+import 'package:socialfeet/messages/message_page.dart';
 
 class BuddyProfile extends StatefulWidget {
   final String username;
@@ -126,8 +126,8 @@ class _BuddyProfileState extends State<BuddyProfile> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MessagesPage(
-                              receiverEmail: email,
+                            builder: (context) => Message_Chat(
+                              receiverEmail: name,
                               //receiverProfileImageUrl: profileImageUrl,
                               //receiverName: name,
                             ),
