@@ -10,7 +10,7 @@ class MessagesPage extends StatefulWidget {
 
   const MessagesPage({
     super.key,
-    required this.receiverEmail,
+    this.receiverEmail = "receivernull@mail.com",
   });
 
   @override
