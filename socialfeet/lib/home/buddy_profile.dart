@@ -128,8 +128,8 @@ class _BuddyProfileState extends State<BuddyProfile> {
                           MaterialPageRoute(
                             builder: (context) => MessagesPage(
                               receiverEmail: email,
-                              receiverProfileImageUrl: profileImageUrl,
-                              receiverName: name,
+                              //receiverProfileImageUrl: profileImageUrl,
+                              //receiverName: name,
                             ),
                           ),
                         );
