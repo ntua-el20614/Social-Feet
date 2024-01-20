@@ -1,21 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:socialfeet/messages/message_bubble.dart';
-import 'package:socialfeet/messages/message_model.dart';
 import 'package:socialfeet/messages/messages_service.dart';
 import 'package:socialfeet/messages/mytextfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class MessagesPage extends StatefulWidget {
-  final String? receiverEmail;
-  final String? receiverName;
-  final String? receiverProfileImageUrl;
+  final String receiverEmail;
 
   const MessagesPage({
     super.key,
-    this.receiverEmail,
-    this.receiverName,
-    this.receiverProfileImageUrl,
+    required this.receiverEmail,
   });
 
   @override
@@ -25,106 +20,167 @@ class MessagesPage extends StatefulWidget {
 class _MessagesPageState extends State<MessagesPage> {
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final ScrollController _scrollController = ScrollController();
+  final FirebaseAuth _authService = FirebaseAuth.instance;
+
+  FocusNode myFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _messageController.addListener(() => setState(() {}));
+
+        // add listener to focus node
+    myFocusNode.addListener(() {
+      if (myFocusNode.hasFocus) {
+        // cause a delay to show keyboard
+        Future.delayed(
+          const Duration(milliseconds: 500),
+          () => scrollDown(),
+        );
+      }
+    });
+
+      @override
+    void dispose() {
+      super.dispose();
+    }
+
+        // wait for listview to show
+    Future.delayed(
+      const Duration(milliseconds: 500),
+      () => scrollDown(),
+    );
+  }
+
+    // scroll conttroller
+  final ScrollController _scrollController = ScrollController();
+
+  void scrollDown() {
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 1), curve: Curves.fastOutSlowIn);
   }
 
   void sendMessage() async {
+    // if there is something inside the textfield
     if (_messageController.text.isNotEmpty) {
-      // Create message object
-      final currentUser = _auth.currentUser!;
-      final newMessage = Message(
-        senderName: currentUser.displayName ?? 'Anonymous',
-        senderEmail: currentUser.email!,
-        senderProfileImageUrl:
-            currentUser.photoURL ?? 'https://via.placeholder.com/150',
-        receiverName: widget.receiverName ?? 'NULL Name',
-        receiverEmail: widget.receiverEmail ?? 'null@mail.com',
-        receiverProfileImageUrl:
-            widget.receiverProfileImageUrl ?? 'nullImageUrl',
-        message: _messageController.text,
-        timestamp: Timestamp.now(),
-      );
+      // send the message
+      await _chatService.sendMessage(
+          widget.receiverEmail, _messageController.text);
 
-      // Send message
-      await _chatService.sendMessage(newMessage);
-
-      // Clear controller
+      // clear text controller
       _messageController.clear();
-      _scrollToBottom();
     }
-  }
 
-  void _scrollToBottom() {
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+    scrollDown();
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentUserEmail = _auth.currentUser!.email!;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        title: Text(widget.receiverEmail ?? 'null@mail.com'),
+        title: Text(widget.receiverEmail),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: Colors.grey,
       ),
       body: Column(
         children: [
+          // display all messages
           Expanded(
-            child: StreamBuilder<List<Message>>(
-              stream: _chatService.getMessages(
-                  currentUserEmail, widget.receiverEmail ?? 'null@mail.com'),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text("No messages yet"));
-                }
-                final messages = snapshot.data!;
-                return ListView.builder(
-                  controller: _scrollController,
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-                    return ChatBubble(
-                      message: message.message,
-                      isCurrentUser: message.senderEmail == currentUserEmail,
-                    );
-                  },
-                );
-              },
-            ),
+            child: _buildMessageList(),
           ),
+
+          // user input
           _buildUserInput(),
         ],
       ),
     );
   }
 
+  // build message list
+  Widget _buildMessageList() {
+    String senderEmail = _authService.currentUser!.email!;
+    return StreamBuilder(
+      stream: _chatService.getMessages(widget.receiverEmail, senderEmail),
+      builder: (context, snapshot) {
+        // errors
+        if (snapshot.hasError) {
+          return const Text("Error");
+        }
+
+        // loading
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text("Loading...");
+        }
+
+        // return list view
+        return ListView(
+          controller: _scrollController,
+          children:
+              snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
+        );
+      },
+    );
+  }
+
+  // build message item
+  Widget _buildMessageItem(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+    // is current user
+    bool isCurrentUser = data['senderEmail'] == _authService.currentUser!.email!;
+
+    // align messages
+    var alignment =
+        isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+
+    return Container(
+      alignment: alignment,
+      child: Column(
+        crossAxisAlignment:
+            isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          ChatBubble(
+            message: data["message"],
+            isCurrentUser: isCurrentUser,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // build message input
   Widget _buildUserInput() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      padding: const EdgeInsets.only(bottom: 50.0),
       child: Row(
         children: [
+          // textfield
           Expanded(
             child: MyTextField(
               controller: _messageController,
               hintText: "Type a message",
               obscureText: false,
+              focusNode: myFocusNode,
             ),
           ),
-          IconButton(
-            icon: Icon(Icons.send),
-            onPressed: sendMessage,
+
+          // send button
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.green,
+              shape: BoxShape.circle,
+            ),
+            margin: const EdgeInsets.only(right: 25),
+            child: IconButton(
+              onPressed: sendMessage,
+              icon: const Icon(
+                Icons.arrow_upward,
+                color: Colors.white,
+              ),
+            ),
           ),
+
         ],
       ),
     );
