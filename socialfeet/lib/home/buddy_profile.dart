@@ -127,9 +127,9 @@ class _BuddyProfileState extends State<BuddyProfile> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => Message_Chat(
-                              receiverEmail: name,
+                              receiverEmail: email,
                               //receiverProfileImageUrl: profileImageUrl,
-                              //receiverName: name,
+                              receiverName: name,
                             ),
                           ),
                         );
