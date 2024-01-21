@@ -6,6 +6,7 @@ import 'package:socialfeet/messages/message_page.dart'; // Adjust the import as 
 import 'package:socialfeet/map/map.dart';
 import 'package:socialfeet/home/home.dart';
 import 'package:socialfeet/profile/profile.dart';
+
 class MessagesPage extends StatefulWidget {
   @override
   State<MessagesPage> createState() => _MessagesPageState();
@@ -16,7 +17,7 @@ class _MessagesPageState extends State<MessagesPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String? currentUserEmail;
   Map<String, DocumentSnapshot> lastMessages = {};
-  int _selectedIndex = 0; 
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -63,7 +64,8 @@ class _MessagesPageState extends State<MessagesPage> {
       return;
     }
 
-    QuerySnapshot querySnapshot = await _firestore.collection('messages')
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('messages')
         .where('senderEmail', isEqualTo: currentUserEmail)
         .get();
 
@@ -76,7 +78,9 @@ class _MessagesPageState extends State<MessagesPage> {
       if (timestamp == null) continue;
 
       if (!lastMessages.containsKey(conversationId) ||
-          (lastMessages[conversationId]!.get('timestamp') as Timestamp).compareTo(timestamp) < 0) {
+          (lastMessages[conversationId]!.get('timestamp') as Timestamp)
+                  .compareTo(timestamp) <
+              0) {
         lastMessages[conversationId] = doc;
       }
     }
@@ -111,19 +115,31 @@ class _MessagesPageState extends State<MessagesPage> {
                 itemBuilder: (context, index) {
                   String conversationId = lastMessages.keys.elementAt(index);
                   DocumentSnapshot messageDoc = lastMessages[conversationId]!;
-                  Map<String, dynamic> data = messageDoc.data() as Map<String, dynamic>;
-                  String otherUserEmail = data['senderEmail'] == currentUserEmail
-                      ? data['receiverEmail']
-                      : data['senderEmail'];
+                  Map<String, dynamic> data =
+                      messageDoc.data() as Map<String, dynamic>;
+                  String otherUserEmail =
+                      data['senderEmail'] == currentUserEmail
+                          ? data['receiverEmail']
+                          : data['senderEmail'];
 
-                  return ListTile(
-                    title: Text(otherUserEmail ?? "Unknown User"),
-                    subtitle: Text(data['message'] ?? "No message"),
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => Message_Chat(receiverEmail: otherUserEmail),
-                      ));
-                    },
+                  return Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          otherUserEmail ?? "Unknown User",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold), // Email in bold
+                        ),
+                        subtitle: Text(data['message'] ?? "No message"),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                Message_Chat(receiverEmail: otherUserEmail),
+                          ));
+                        },
+                      ),
+                      Divider(color: Colors.black), // Black line divider
+                    ],
                   );
                 },
               )
@@ -137,25 +153,17 @@ class _MessagesPageState extends State<MessagesPage> {
     return BottomNavigationBar(
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(Icons.message),
-          label: 'Messages',
-          backgroundColor: Colors.black
-        ),
+            icon: Icon(Icons.message),
+            label: 'Messages',
+            backgroundColor: Colors.black),
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: ' ',
-          backgroundColor: Colors.black
-        ),
+            icon: Icon(Icons.home), label: ' ', backgroundColor: Colors.black),
         BottomNavigationBarItem(
-          icon: Icon(Icons.map),
-          label: ' ',
-          backgroundColor: Colors.black
-        ),
+            icon: Icon(Icons.map), label: ' ', backgroundColor: Colors.black),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: ' ',
-          backgroundColor: Colors.black
-        ),
+            icon: Icon(Icons.person),
+            label: ' ',
+            backgroundColor: Colors.black),
       ],
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white.withOpacity(0.6),
@@ -164,7 +172,7 @@ class _MessagesPageState extends State<MessagesPage> {
       type: BottomNavigationBarType.fixed,
       backgroundColor: Colors.black,
       currentIndex: 0, // Adjust this as needed
-      
+
       onTap: _onItemTapped,
     );
   }
