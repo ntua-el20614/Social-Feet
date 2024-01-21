@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:socialfeet/messages/message_bubble.dart';
@@ -6,9 +7,9 @@ import 'package:socialfeet/messages/mytextfield.dart';
 
 class Message_Chat extends StatefulWidget {
   final String receiverEmail;
-  final String receiverName;
+  String receiverName;
 
-  const Message_Chat({
+  Message_Chat({
     super.key,
     this.receiverEmail = "receivernull@mail.com",
     this.receiverName = "receivernull",
@@ -37,6 +38,22 @@ class _Message_ChatState extends State<Message_Chat> {
         );
       }
     });
+    if (widget.receiverName.isEmpty) {
+      fetchUserData();
+    }
+  }
+
+    void fetchUserData() async {
+    DatabaseReference userRef =
+        FirebaseDatabase.instance.ref('users/${widget.receiverEmail}'); // Assuming the email is used as the key
+    DatabaseEvent event = await userRef.once();
+
+    if (event.snapshot.exists) {
+      var userData = event.snapshot.value as Map<dynamic, dynamic>;
+      setState(() {
+        widget.receiverName = userData['username'] ?? ''; // Assuming 'username' is the field name
+      });
+    }
   }
 
   @override
@@ -82,7 +99,7 @@ class _Message_ChatState extends State<Message_Chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
+        title: Text(widget.receiverName.isEmpty ? widget.receiverEmail : widget.receiverName),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.grey,
