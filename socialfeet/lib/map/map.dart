@@ -12,13 +12,14 @@ import 'package:socialfeet/messages/messages.dart';
 import 'package:socialfeet/home/home.dart';
 //import 'package:socialfeet/map/map.dart';
 import 'package:socialfeet/profile/profile.dart';
+
 class MapPage extends StatefulWidget {
   @override
   _MapPageState createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {
-   int _selectedIndex = 2;
+  int _selectedIndex = 2;
   GoogleMapController? mapController; // Controller for Google map
   LatLng _center = const LatLng(37.979064, 23.783042); // Default location
   final Set<Marker> _markers = {}; // Markers for pinned locations
@@ -27,6 +28,7 @@ class _MapPageState extends State<MapPage> {
 
   TextEditingController _searchController = TextEditingController();
 
+  Set<Circle> _userLocationCircle = {}; // Initialize the set for the circle
 
   // Filter variables
   bool filterBike = true;
@@ -45,13 +47,15 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _loadMarkers() async {
-  DatabaseReference locationsRef = FirebaseDatabase.instance.ref('location');  // Adjusted path
+    DatabaseReference locationsRef =
+        FirebaseDatabase.instance.ref('location'); // Adjusted path
     DatabaseEvent event = await locationsRef.once();
     print("locationsRef: $locationsRef");
     print("event: $event");
-      if (event.snapshot.exists) {
-    Map<dynamic, dynamic> locations = event.snapshot.value as Map<dynamic, dynamic>;
-    print("locations: $locations");
+    if (event.snapshot.exists) {
+      Map<dynamic, dynamic> locations =
+          event.snapshot.value as Map<dynamic, dynamic>;
+      print("locations: $locations");
       setState(() {
         _markers.clear();
         locations.forEach((key, value) {
@@ -59,13 +63,14 @@ class _MapPageState extends State<MapPage> {
 
           // Check if the location matches the selected filters
           bool matchesFilter = (filterBike && markerInfo['isBike']) ||
-                               (filterRun && markerInfo['isRun']) ||
-                               (filterWalk && markerInfo['isWalk']);
+              (filterRun && markerInfo['isRun']) ||
+              (filterWalk && markerInfo['isWalk']);
 
           if (matchesFilter) {
-            final LatLng position = LatLng(markerInfo['lat'], markerInfo['long']);
+            final LatLng position =
+                LatLng(markerInfo['lat'], markerInfo['long']);
             final String name = markerInfo['name'];
-            final String info = markerInfo['Info']; // Assuming 'Info' field exists
+            final String info = markerInfo['Info'];
             print("Position: $position");
 
             _markers.add(
@@ -84,12 +89,24 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-   _getUserLocation() async {
+  _getUserLocation() async {
     var position = await _determinePosition();
+    LatLng currentUserLocation = LatLng(position.latitude, position.longitude);
 
     setState(() {
-      _center = LatLng(position.latitude, position.longitude);
+      _center = currentUserLocation; // Update the map center to user location
       _isLoading = false;
+      // Directly create and set the circle
+      _userLocationCircle = {
+        Circle(
+          circleId: CircleId("user_location"),
+          center: currentUserLocation,
+          radius: 50, // Adjust the radius as needed
+          fillColor: Colors.blue.withOpacity(0.5), // Semi-transparent blue fill
+          strokeColor: Colors.blue, // Blue border
+          strokeWidth: 2, // Border width
+        ),
+      };
     });
   }
 
@@ -99,15 +116,15 @@ class _MapPageState extends State<MapPage> {
         hintText: 'Search here...',
         suffixIcon: Icon(Icons.search),
       ),
-        onChanged: (value) {
-            setState(() {
-              _searchQuery = value;
-              });
+      onChanged: (value) {
+        setState(() {
+          _searchQuery = value;
+        });
         if (_searchQuery.isNotEmpty) {
           _searchPlaces(_searchQuery);
-            }
-          },
-        );
+        }
+      },
+    );
   }
 
   Future<void> _searchPlaces(String query) async {
@@ -122,7 +139,7 @@ class _MapPageState extends State<MapPage> {
       if (predictions.isNotEmpty) {
         var placeId = predictions[0]['place_id'];
         _getPlaceDetails(placeId);
-            }
+      }
     } else {
       // Handle error
     }
@@ -138,9 +155,7 @@ class _MapPageState extends State<MapPage> {
       var data = json.decode(response.body);
       var location = data['result']['geometry']['location'];
       _moveMapToLocation(location['lat'], location['lng']);
-    } else {
-      // Handle error
-    }
+    } else {}
   }
 
   void _moveMapToLocation(double lat, double lng) {
@@ -171,7 +186,6 @@ class _MapPageState extends State<MapPage> {
           ),
         ),
       ),
-      
       body: Column(
         children: [
           _buildFilterBar(), // Filter bar
@@ -182,9 +196,10 @@ class _MapPageState extends State<MapPage> {
                     onMapCreated: _onMapCreated,
                     initialCameraPosition: CameraPosition(
                       target: _center,
-                      zoom: 11.0,
+                      zoom: 17.0,
                     ),
                     markers: _markers,
+                    circles: _userLocationCircle, // Add the circle set here
                   ),
           ),
         ],
@@ -193,7 +208,7 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-Widget _buildFilterBar() {
+  Widget _buildFilterBar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -230,9 +245,6 @@ Widget _buildFilterBar() {
       ],
     );
   }
-
-
-
 
   Widget _buildBottomBar() {
     return BottomNavigationBar(
@@ -288,7 +300,6 @@ Widget _buildFilterBar() {
     }
   }
 
-
   void _handleTap(LatLng point) {
     setState(() {
       _markers.add(
@@ -330,4 +341,5 @@ Widget _buildFilterBar() {
 
     // When we reach here, permissions are granted and we can continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
-  }}
+  }
+}
