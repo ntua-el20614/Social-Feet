@@ -20,11 +20,27 @@ class RegisterScreen extends StatelessWidget {
 
   Future<bool> registerUser(context, String email, String password,
       String fullname, String username, String location) async {
+    final FirebaseDatabase _database = FirebaseDatabase.instance;
+
     try {
-      UserCredential userCredential = await _auth
+      // Check if the username already exists
+      DatabaseReference usersRef = _database.ref("users");
+      DatabaseEvent event = await usersRef.child(username).once();
+      DataSnapshot snapshot = event.snapshot;
+      if (snapshot.exists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text("Username already taken. Please choose another one.")),
+        );
+        return false;
+      }
+
+      // Proceed with registration if username is unique
+      UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      _saveUserDataToDatabase(email, username, fullname,location);
+      _saveUserDataToDatabase(email, username, fullname, location);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Successful Registration")),
@@ -148,10 +164,10 @@ class RegisterScreen extends StatelessWidget {
         final String fullname = fullnameController.text.trim();
         final String location = dobController.text.trim();
 
-        bool isRegistered =
-            await registerUser(context, email, password, fullname, username,location);
+        bool isRegistered = await registerUser(
+            context, email, password, fullname, username, location);
         if (isRegistered) {
-          _saveUserDataToDatabase(email, username, fullname,location);
+          _saveUserDataToDatabase(email, username, fullname, location);
           if (isRegistered) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("User registered successfully!")),
@@ -159,7 +175,9 @@ class RegisterScreen extends StatelessWidget {
 
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => EditSportsScreen(cameFromRegisterPage : true)),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      EditSportsScreen(cameFromRegisterPage: true)),
             );
           }
         } else {
@@ -192,7 +210,8 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  void _saveUserDataToDatabase(String email, String username, String fullname, String location) {
+  void _saveUserDataToDatabase(
+      String email, String username, String fullname, String location) {
     // Encode the email to be a valid Firebase key
     try {
       String encodedEmail = username;
@@ -203,7 +222,7 @@ class RegisterScreen extends StatelessWidget {
         'aboutMe': '',
         'username': username,
         'fullname': fullname,
-        'location':location,
+        'location': location,
         'running': {
           'distance': 0,
           'enabled': false,
