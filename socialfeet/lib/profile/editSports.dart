@@ -111,7 +111,7 @@ class _EditSportsScreenState extends State<EditSportsScreen> {
           SizedBox(height: 16),
           TextField(
             decoration: InputDecoration(
-              labelText: 'Average Speed',
+              labelText: 'Average Speed km/h',
             ),
             controller:
                 TextEditingController(text: sportData['speed']?.toString()),
@@ -122,7 +122,7 @@ class _EditSportsScreenState extends State<EditSportsScreen> {
           SizedBox(height: 8),
           TextField(
             decoration: InputDecoration(
-              labelText: 'Total Distance',
+              labelText: 'Total Distance km',
             ),
             controller:
                 TextEditingController(text: sportData['distance']?.toString()),
